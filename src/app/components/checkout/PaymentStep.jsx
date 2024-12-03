@@ -22,12 +22,11 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
       // Crear formulario oculto
       const form = document.createElement('form');
       form.method = 'POST';
-      form.action = '/checkout/'; // URL del checkout de WooCommerce
+      form.action = 'https://www.cruzeirogomas.cl/finalizar-compra/';
       form.target = '_parent'; // Importante: enviar al padre, no al iframe
 
-      // Preparar todos los campos necesarios para WooCommerce
+      // Preparar campos del formulario WooCommerce
       const formFields = {
-        // Datos de facturación
         'billing_first_name': orderData.personalInfo.name.split(' ')[0],
         'billing_last_name': orderData.personalInfo.name.split(' ').slice(1).join(' '),
         'billing_email': orderData.email,
@@ -35,29 +34,16 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
         'billing_address_1': orderData.shipping.address,
         'billing_city': orderData.shipping.ws_comuna_name,
         'billing_state': orderData.shipping.ws_region_name,
-        'billing_postcode': '',
         'billing_country': 'CL',
-
-        // Datos de envío
         'shipping_first_name': orderData.personalInfo.name.split(' ')[0],
         'shipping_last_name': orderData.personalInfo.name.split(' ').slice(1).join(' '),
         'shipping_address_1': orderData.shipping.address,
         'shipping_city': orderData.shipping.ws_comuna_name,
         'shipping_state': orderData.shipping.ws_region_name,
-        'shipping_postcode': '',
         'shipping_country': 'CL',
-
-        // Datos adicionales
-        'order_comments': '',
-        'shipping_method[0]': 'flat_rate:1',
-        '_wpnonce': window.parent.wc_checkout_params?.nonce || '',
-        '_wp_http_referer': '/checkout/',
-        
-        // Indica que es un envío del formulario de checkout
-        'woocommerce-process-checkout-nonce': window.parent.wc_checkout_params?.nonce || '',
       };
 
-      // Agregar todos los campos al formulario
+      // Agregar campos al formulario
       Object.entries(formFields).forEach(([name, value]) => {
         const input = document.createElement('input');
         input.type = 'hidden';
@@ -66,7 +52,7 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
         form.appendChild(input);
       });
 
-      // Agregar el formulario al documento y enviarlo
+      // Enviar formulario
       document.body.appendChild(form);
       form.submit();
 
@@ -115,7 +101,7 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
           disabled={isProcessing}
           className="w-full bg-[#5da872] text-white px-4 py-2 rounded-lg hover:bg-[#4c9660] transition-colors mt-4 disabled:opacity-50"
         >
-          {isProcessing ? 'Procesando...' : 'Proceder al pago'}
+          {isProcessing ? 'Redirigiendo al pago...' : 'Continuar al pago'}
         </button>
       </motion.div>
 
