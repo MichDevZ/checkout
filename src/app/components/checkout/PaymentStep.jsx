@@ -76,8 +76,8 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
       };
 
       // Create order in WooCommerce
-      const consumerKey = 'ck_ce0951a0005444315bfd95be50c8df3b3daa4f6';
-      const consumerSecret = 'cs_4668827b7c781346252ec2b50a59cce1e6e60182';
+      const consumerKey = 'ck_688c1f71bf9e218c6ecb582fde9725b3e08da3d9';
+      const consumerSecret = 'cs_f81a648e232d4467208162e18b89d8fdefbb0592';
       const credentials = btoa(`${consumerKey}:${consumerSecret}`);
 
       const response = await fetch('https://www.cruzeirogomas.cl/wp-json/wc/v3/orders', {
