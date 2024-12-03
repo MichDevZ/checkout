@@ -26,7 +26,7 @@ const useCartData = () => {
              quantity: item.quantity,
              weight: parseFloat(item.data.weight || 0),
              subtotal: parseFloat(item.line_total),
-             images: item.data.images,
+             images: item.data.images.thumbnail,
              variation: item.variation,
              variation_id: item.variation_id
            })),
