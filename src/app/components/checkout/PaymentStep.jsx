@@ -5,8 +5,24 @@ import { motion } from 'framer-motion';
 import { AlertCircle } from 'lucide-react';
 
 export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
+  const [paymentMethod, setPaymentMethod] = useState('woo_webpay');
   const [isProcessing, setIsProcessing] = useState(false);
   const [errors, setErrors] = useState({});
+
+  const paymentMethods = [
+    { 
+      id: 'woo_webpay', 
+      name: 'WebPay', 
+      description: 'Paga con tarjeta de crédito o débito',
+      gateway: 'webpay_plus_rest'
+    },
+    { 
+      id: 'woo_mercadopago', 
+      name: 'Mercado Pago', 
+      description: 'Paga con Mercado Pago',
+      gateway: 'woomercadopago_custom'
+    }
+  ];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -14,50 +30,84 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
     setErrors({});
 
     try {
-      // Validar datos necesarios
+      // Validate necessary data
       if (!orderData.personalInfo || !orderData.email || !orderData.shipping) {
         throw new Error('Faltan datos necesarios para continuar');
       }
 
-      // Crear formulario oculto
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = 'https://www.cruzeirogomas.cl/finalizar-compra/';
-      form.target = '_parent'; // Importante: enviar al padre, no al iframe
+      const selectedMethod = paymentMethods.find(m => m.id === paymentMethod);
 
-      // Preparar campos del formulario WooCommerce
-      const formFields = {
-        'billing_first_name': orderData.personalInfo.name.split(' ')[0],
-        'billing_last_name': orderData.personalInfo.name.split(' ').slice(1).join(' '),
-        'billing_email': orderData.email,
-        'billing_phone': orderData.personalInfo.phone,
-        'billing_address_1': orderData.shipping.address,
-        'billing_city': orderData.shipping.ws_comuna_name,
-        'billing_state': orderData.shipping.ws_region_name,
-        'billing_country': 'CL',
-        'shipping_first_name': orderData.personalInfo.name.split(' ')[0],
-        'shipping_last_name': orderData.personalInfo.name.split(' ').slice(1).join(' '),
-        'shipping_address_1': orderData.shipping.address,
-        'shipping_city': orderData.shipping.ws_comuna_name,
-        'shipping_state': orderData.shipping.ws_region_name,
-        'shipping_country': 'CL',
+      // Prepare order data for WooCommerce
+      const wooCommerceOrderData = {
+        payment_method: selectedMethod.gateway,
+        payment_method_title: selectedMethod.name,
+        set_paid: false,
+        billing: {
+          first_name: orderData.personalInfo.name.split(' ')[0],
+          last_name: orderData.personalInfo.name.split(' ').slice(1).join(' '),
+          address_1: orderData.shipping.address,
+          city: orderData.shipping.ws_comuna_name,
+          state: orderData.shipping.ws_region_name,
+          postcode: '',
+          country: 'CL',
+          email: orderData.email,
+          phone: orderData.personalInfo.phone
+        },
+        shipping: {
+          first_name: orderData.personalInfo.name.split(' ')[0],
+          last_name: orderData.personalInfo.name.split(' ').slice(1).join(' '),
+          address_1: orderData.shipping.address,
+          city: orderData.shipping.ws_comuna_name,
+          state: orderData.shipping.ws_region_name,
+          postcode: '',
+          country: 'CL'
+        },
+        line_items: orderData.cartItems.map(item => ({
+          product_id: item.id,
+          quantity: item.quantity
+        })),
+        shipping_lines: [
+          {
+            method_id: 'flat_rate',
+            method_title: 'Flat Rate',
+            total: orderData.shipping.shipping_cost.toString()
+          }
+        ]
       };
 
-      // Agregar campos al formulario
-      Object.entries(formFields).forEach(([name, value]) => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = name;
-        input.value = value || '';
-        form.appendChild(input);
+      // Create order in WooCommerce
+      const consumerKey = 'ck_ce0951a0005444315bfd95be50c8df3b3daa4f6';
+      const consumerSecret = 'cs_4668827b7c781346252ec2b50a59cce1e6e60182';
+      const credentials = btoa(`${consumerKey}:${consumerSecret}`);
+
+      const response = await fetch('https://www.cruzeirogomas.cl/wp-json/wc/v3/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${credentials}`
+        },
+        body: JSON.stringify(wooCommerceOrderData),
       });
 
-      // Enviar formulario
-      document.body.appendChild(form);
-      form.submit();
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Error creating order: ${response.status}`);
+      }
+
+      const createdOrder = await response.json();
+
+      // Get the payment URL from the WooCommerce response
+      const paymentUrl = createdOrder.payment_url;
+      
+      if (!paymentUrl) {
+        throw new Error('No se pudo obtener la URL de pago');
+      }
+
+      // Redirect the parent window to the payment URL
+      window.parent.location.href = paymentUrl;
 
     } catch (error) {
-      console.error('Error al procesar el checkout:', error);
+      console.error('Error creating order:', error);
       setErrors({
         submit: error.message || 'Error al procesar la orden'
       });
@@ -73,10 +123,37 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
       className="space-y-6"
     >
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-[#222222]">Finalizar Compra</h2>
+        <h2 className="text-2xl font-bold text-[#222222]">Método de Pago</h2>
         <p className="text-[#222222] mt-2">
-          Revisa tus datos y procede al pago
+          Selecciona tu método de pago preferido para completar la compra.
         </p>
+      </div>
+
+      <div className="space-y-4">
+        {paymentMethods.map((method) => (
+          <div
+            key={method.id}
+            className={`border rounded-lg p-4 cursor-pointer transition-colors ${
+              paymentMethod === method.id ? 'border-[#5da872] bg-[#f0f9f2]' : 'border-gray-200'
+            }`}
+            onClick={() => setPaymentMethod(method.id)}
+          >
+            <div className="flex items-center space-x-3">
+              <input
+                type="radio"
+                name="paymentMethod"
+                value={method.id}
+                checked={paymentMethod === method.id}
+                onChange={() => setPaymentMethod(method.id)}
+                className="text-[#5da872] focus:ring-[#5da872]"
+              />
+              <div>
+                <h3 className="font-medium text-[#222222]">{method.name}</h3>
+                <p className="text-sm text-gray-500">{method.description}</p>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
 
       <motion.div
@@ -86,7 +163,7 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
         transition={{ duration: 0.3 }}
         className="bg-[#353535] p-6 rounded-lg space-y-4"
       >
-        <h3 className="text-[#5da872] font-semibold text-lg mb-4">Confirma tus datos antes de proceder:</h3>
+        <h3 className="text-[#5da872] font-semibold text-lg mb-4">Confirma tus datos antes de proceder al pago:</h3>
         <div className="space-y-2 text-[#ffffff]">
           <p><strong>Nombre:</strong> {orderData.personalInfo.name}</p>
           <p><strong>Email:</strong> {orderData.email}</p>
@@ -101,7 +178,7 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
           disabled={isProcessing}
           className="w-full bg-[#5da872] text-white px-4 py-2 rounded-lg hover:bg-[#4c9660] transition-colors mt-4 disabled:opacity-50"
         >
-          {isProcessing ? 'Redirigiendo al pago...' : 'Continuar al pago'}
+          {isProcessing ? 'Procesando...' : 'Confirmar y proceder al pago'}
         </button>
       </motion.div>
 
@@ -124,6 +201,21 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
           Revisar envío
         </motion.button>
       </div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4, duration: 0.5 }}
+        className="bg-[#353535] p-4 rounded-lg mt-6"
+      >
+        <div className="flex items-center space-x-2 text-[#5da872]">
+          <AlertCircle className="w-5 h-5" />
+          <h3 className="font-semibold">Pago Seguro</h3>
+        </div>
+        <p className="text-[#ffffff] mt-2">
+          Tus pagos están protegidos por {paymentMethod === 'woo_webpay' ? 'WebPay' : 'Mercado Pago'}.
+        </p>
+      </motion.div>
     </motion.div>
   );
 }
