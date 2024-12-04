@@ -54,7 +54,7 @@ export default function OrderSummary({ orderData, shippingCost, isPaymentStep, c
               >
                 <div className="flex items-center">
                   <img 
-                    src={item.image || "/placeholder.svg?height=50&width=50"} 
+                    src={item.images || "/placeholder.svg?height=50&width=50"} 
                     alt={item.name} 
                     className="w-12 h-12 object-cover rounded mr-4"
                   />
