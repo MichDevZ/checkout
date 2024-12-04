@@ -217,7 +217,16 @@ const getShipitPrice = async (comuna, weight) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    updateOrderData('shipping', shippingDetails);
+    
+    const shippingInfo = {
+      ...shippingDetails,
+      id: shippingDetails.type === 'delivery' ? 
+        (shippingDetails.shipping_method === 'shipit' ? '2' : '1') : '3', // 1: envío directo, 2: shipit, 3: retiro en tienda
+      tipo: shippingDetails.type === 'delivery' ? 'Despacho a domicilio' : 'Retiro en tienda'
+    };
+  
+    // Actualizar el orderData con toda la información
+    updateOrderData('shipping', shippingInfo);
     nextStep();
   };
 
@@ -281,8 +290,8 @@ const getShipitPrice = async (comuna, weight) => {
       </AnimatePresence>
 
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-[#222222]">Detalles de Envío</h2>
-        <p className="text-[#222222] mt-2">
+        <h2 className="text-4xl font-bold text-[#222222]">Detalles de Envío</h2>
+        <p className="text-[#222222] mt-4">
           Queremos asegurarnos de que tu pedido llegue de la mejor manera posible. Tu satisfacción es nuestra prioridad.
         </p>
         <motion.div
@@ -303,30 +312,31 @@ const getShipitPrice = async (comuna, weight) => {
               repeatType: "reverse",
             }}
           />
-          <h3 className="font-bold text-xl mb-6 text-[#5da872] relative z-10">
-            Nuestro compromiso con tu envío:
-          </h3>
-          <motion.ul className="space-y-4 relative z-10">
-            {[
-              { icon: Package, text: "Empaquetamos cuidadosamente cada producto para garantizar su seguridad." },
-              { icon: Truck, text: "Te mantendremos informado en cada etapa del proceso de envío." },
-              { icon: Headphones, text: "Nuestro equipo está disponible para resolver cualquier duda que tengas." },
-              { icon: Clock, text: "Si eliges envío a domicilio, nos aseguraremos de que llegue en el horario más conveniente para ti." },
-            ].map((item, index) => (
-              <motion.li
-                key={index}
-                className="flex items-center text-[#ffffff]"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                <item.icon className="mr-3 text-[#5da872]" size={24} />
-                <span>{item.text}</span>
-              </motion.li>
-            ))}
-          </motion.ul>
-        </motion.div>
-      </div>
+          <h3 className="font-bold text-xl mb-6 text-[#5da872] relative z-10 text-left">
+  Nuestro compromiso con tu envío:
+</h3>
+<motion.ul className="space-y-4 relative z-10 ">
+  {[
+    { icon: Package, text: "Empaquetamos cuidadosamente cada producto para garantizar su seguridad." },
+    { icon: Truck, text: "Te mantendremos informado en cada etapa del proceso de envío." },
+    { icon: Headphones, text: "Nuestro equipo está disponible para resolver cualquier duda que tengas." },
+    { icon: Clock, text: "Si eliges envío a domicilio, nos aseguraremos de que llegue en el horario más conveniente para ti." },
+  ].map((item, index) => (
+    <motion.li
+      key={index}
+      className="flex items-center mr-2 text-[#ffffff] text-left"
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+    >
+      <item.icon className="ml-3 mr-2 text-[#5da872] md:w-6 md:h-6 w-12 h-12" />
+      <span className="text-left">{item.text}</span>
+      
+    </motion.li>
+  ))}
+</motion.ul>
+</motion.div>
+</div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-4">
@@ -573,29 +583,50 @@ const getShipitPrice = async (comuna, weight) => {
           </motion.div>
         )}
 
-        <div className="flex justify-between pt-4">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            type="button"
-            onClick={prevStep}
-            className="px-6 py-3 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/90"
-          >
-            Volver a datos personales
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            type="submit"
-            onClick={() => {
-              updateOrderData('shipping', shippingDetails);
-              nextStep();
-            }}
-            className="px-6 py-3 bg-[#397e4c] text-[#ffffff] rounded-lg hover:bg-[#5da872]"
-          >
-            Ir a la pasarela de pago
-          </motion.button>
-        </div>
+<div className="flex justify-between items-center pt-6 gap-4">
+  <motion.button
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    type="button"
+    onClick={prevStep}
+    className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium shadow-sm transition-colors duration-200 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
+  >
+    <span className="flex items-center">
+      <svg 
+        className="w-5 h-3 " 
+        fill="none" 
+        stroke="currentColor" 
+        viewBox="0 0 24 24"
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      Volver a datos personales
+    </span>
+  </motion.button>
+  
+  <motion.button
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    type="submit"
+    onClick={() => {
+      updateOrderData('shipping', shippingDetails);
+      nextStep();
+    }}
+    className="px-6 py-3 bg-[#397e4c] text-white rounded-lg font-medium shadow-sm transition-colors duration-200 hover:bg-[#2d6b3d] focus:outline-none focus:ring-2 focus:ring-[#397e4c]/50"
+  >
+    <span className="flex items-center">
+      Ir a la pasarela de pago
+      <svg 
+        className="w-5 h-5" 
+        fill="none" 
+        stroke="currentColor" 
+        viewBox="0 0 24 24"
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+      </svg>
+    </span>
+  </motion.button>
+</div>
 
         <input type="hidden" name="shipping_ws_region_name" value={shippingDetails.ws_region_name} />
         <input type="hidden" name="shipping_ws_region_id" value={shippingDetails.ws_region_id} />

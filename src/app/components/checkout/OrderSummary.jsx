@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronUp, ShoppingBag, Truck, CreditCard } from 'lucide-react';
 
 export default function OrderSummary({ orderData, shippingCost, isPaymentStep, cartData }) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
 
   console.log('OrderSummary - cartData:', cartData);
 
@@ -61,17 +61,17 @@ export default function OrderSummary({ orderData, shippingCost, isPaymentStep, c
                   <div>
                     <span className="font-medium">{item.name}</span>
                     <p className="text-sm text-gray-600">Cantidad: {item.quantity}</p>
-                    <p className="text-sm text-gray-600">Precio unitario: ${item.price.toLocaleString()}</p>
+                    <p className="text-sm text-gray-600">Precio unitario: ${item.price.toLocaleString('es-CL', { maximumFractionDigits: 0 })}</p>
                   </div>
                 </div>
-                <span className="text-[#5da872] font-bold">${(item.price * item.quantity).toLocaleString()}</span>
+                <span className="text-[#5da872] font-bold">${(item.price * item.quantity).toLocaleString('es-CL', { maximumFractionDigits: 0 })}</span>
               </motion.div>
             ))}
             
             <div className="border-t border-[#5da872] mt-4 pt-4 space-y-2">
               <div className="flex justify-between">
                 <span>Subtotal</span>
-                <span>${subtotal.toLocaleString()}</span>
+                <span>${subtotal.toLocaleString('es-CL', { maximumFractionDigits: 0 })}</span>
               </div>
               {shippingCost !== undefined && (
                 <div className="flex justify-between items-center">
@@ -79,7 +79,7 @@ export default function OrderSummary({ orderData, shippingCost, isPaymentStep, c
                     <Truck className="mr-2 text-[#5da872]" size={18} />
                     Envío
                   </span>
-                  <span>${shipping.toLocaleString()}</span>
+                  <span>${shipping.toLocaleString('es-CL', { maximumFractionDigits: 0 })}</span>
                 </div>
               )}
               <motion.div
@@ -91,7 +91,7 @@ export default function OrderSummary({ orderData, shippingCost, isPaymentStep, c
                   <CreditCard className="mr-2" size={18} />
                   Total
                 </span>
-                <span>${total.toLocaleString()}</span>
+                <span>${total.toLocaleString('es-CL', { maximumFractionDigits: 0 })}</span>
               </motion.div>
             </div>
           </motion.div>

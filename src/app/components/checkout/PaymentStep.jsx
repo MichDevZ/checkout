@@ -23,7 +23,7 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
       gateway: 'woomercadopago_custom'
     }
   ];
-
+  console.log(orderData)
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsProcessing(true);
@@ -37,6 +37,7 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
 
       const selectedMethod = paymentMethods.find(m => m.id === paymentMethod);
 
+     
       // Prepare order data for WooCommerce
       const wooCommerceOrderData = {
         payment_method: selectedMethod.gateway,
@@ -51,7 +52,9 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
           postcode: '',
           country: 'CL',
           email: orderData.email,
-          phone: orderData.personalInfo.phone
+          phone: orderData.personalInfo.phone,
+          tipo: orderData.personalInfo.type === 'personal' ? 'Boleta' : 'Factura',
+          rut: orderData.personalInfo.rut
         },
         shipping: {
           first_name: orderData.personalInfo.name.split(' ')[0],
@@ -68,8 +71,8 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
         })),
         shipping_lines: [
           {
-            method_id: 'flat_rate',
-            method_title: 'Flat Rate',
+            method_id: orderData.shipping.id,
+            method_title: orderData.shipping.shiping_method,
             total: orderData.shipping.shipping_cost.toString()
           }
         ]

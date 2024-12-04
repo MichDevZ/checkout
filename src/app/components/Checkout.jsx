@@ -62,14 +62,13 @@ export default function Checkout() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f7f7f7] to-[#eeeeee] pt-6 pb-12 text-[#222222]">
       <div className="max-w-6xl mx-auto px-4">
-        <div className="flex items-center justify-between mb-4">
-          <img 
-            src="https://www.cruzeirogomas.cl/wp-content/uploads/sites/2/2024/11/cropped-logo_cruzeirogomas_mediano_1.png"
-            alt="Cruzeiro Gomas"
-            className="h-8 w-auto object-contain"
-          />
-          <h1 className="text-2xl font-bold text-[#397e4c] bg-white px-4 py-2 rounded-lg shadow-md">Caja</h1>
-        </div>
+      <div className="flex items-center justify-center mb-4">
+  <img 
+    src="https://www.cruzeirogomas.cl/wp-content/uploads/sites/2/2024/11/cropped-logo_cruzeirogomas_mediano_1.png"
+    alt="Cruzeiro Gomas"
+    className="h-8 w-auto object-contain"
+  />
+</div>
         <AnimatePresence mode="wait">
           <motion.div
             key={step}

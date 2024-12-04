@@ -40,11 +40,11 @@ export default function PersonalInfoStep({ nextStep, prevStep, updateOrderData, 
       className="space-y-6"
     >
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-[#222222]">Tus Datos Personales</h2>
-        <p className="text-[#222222] mt-2">
+        <h2 className="text-3xl font-bold text-[#222222]">Tus Datos Personales</h2>
+        <p className="text-[#222222] mt-2" Style="margin-top:16px;">
           Queremos conocerte mejor para brindarte la mejor experiencia posible
         </p>
-        <div className="grid grid-cols-2 gap-4 w-full">
+        <div className="grid grid-cols-2 gap-4 w-full" Style="margin-top:24px;">
           {['personal', 'business'].map((type) => (
             <motion.label
               key={type}
@@ -66,7 +66,7 @@ export default function PersonalInfoStep({ nextStep, prevStep, updateOrderData, 
                 className={`w-16 h-16 mb-2 flex items-center justify-center rounded-full ${
                   personalInfo.type === type ? 'bg-white text-[#5da872]' : 'bg-[#5da872] text-white'
                 }`}
-                animate={{ rotate: personalInfo.type === type ? 360 : 0 }}
+                
                 transition={{ duration: 0.5 }}
               >
                 {type === 'personal' ? (
