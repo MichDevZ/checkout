@@ -54,7 +54,14 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
           email: orderData.email,
           phone: orderData.personalInfo.phone,
           tipo: orderData.personalInfo.type === 'personal' ? 'Boleta' : 'Factura',
-          rut: orderData.personalInfo.rut
+          rut: orderData.personalInfo.rut,
+          // Nuevos campos
+          razon_social: orderData.personalInfo.businessName || '',
+          rut_empresa: orderData.personalInfo.businessRut || '',
+          giro: orderData.personalInfo.businessGiro || '',
+          personal_rut: orderData.personalInfo.rut,
+          nombre_contacto: orderData.personalInfo.name || '', // Nombre de quien recibe
+          telefono_contacto: orderData.personalInfo.phone || '', // Teléfono de quien recibe
         },
         shipping: {
           first_name: orderData.personalInfo.name.split(' ')[0],

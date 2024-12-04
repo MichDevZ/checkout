@@ -11,10 +11,13 @@ export default function PersonalInfoStep({ nextStep, prevStep, updateOrderData, 
     name: '',
     rut: '',
     phone: '',
+    // Campos para empresa
     businessName: '',
     businessRut: '',
+    businessGiro: '', // Nuevo campo para el giro
+    businessContact: '', // Nuevo campo para el nombre del contacto
+    businessPhone: '', // Nuevo campo para el teléfono de la empresa
   });
-
   const amountForFreeShipping = shippingCosts.freeShippingThreshold - cartTotal;
   const [showFreeShippingAlert, setShowFreeShippingAlert] = useState(true);
 
@@ -48,9 +51,8 @@ export default function PersonalInfoStep({ nextStep, prevStep, updateOrderData, 
           {['personal', 'business'].map((type) => (
             <motion.label
               key={type}
-              className={`flex flex-col items-center justify-center p-4 rounded-lg cursor-pointer transition-all ${
-                personalInfo.type === type ? 'bg-[#5da872] text-white' : 'bg-white text-[#397e4c] border-2 border-[#397e4c]'
-              }`}
+              className={`flex flex-col items-center justify-center p-4 rounded-lg cursor-pointer transition-all ${personalInfo.type === type ? 'bg-[#5da872] text-white' : 'bg-white text-[#397e4c] border-2 border-[#397e4c]'
+                }`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -63,10 +65,9 @@ export default function PersonalInfoStep({ nextStep, prevStep, updateOrderData, 
                 onChange={(e) => setPersonalInfo({ ...personalInfo, type: e.target.value })}
               />
               <motion.div
-                className={`w-16 h-16 mb-2 flex items-center justify-center rounded-full ${
-                  personalInfo.type === type ? 'bg-white text-[#5da872]' : 'bg-[#5da872] text-white'
-                }`}
-                
+                className={`w-16 h-16 mb-2 flex items-center justify-center rounded-full ${personalInfo.type === type ? 'bg-white text-[#5da872]' : 'bg-[#5da872] text-white'
+                  }`}
+
                 transition={{ duration: 0.5 }}
               >
                 {type === 'personal' ? (
@@ -140,19 +141,7 @@ export default function PersonalInfoStep({ nextStep, prevStep, updateOrderData, 
       <form onSubmit={handleSubmit} className="space-y-4">
         {personalInfo.type === 'personal' ? (
           <>
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium mb-2 text-[#397e4c]">
-                Nombre completo
-              </label>
-              <input
-                type="text"
-                id="name"
-                className="w-full p-3 border border-[#676767] rounded-lg bg-[#353535] text-[#ffffff] placeholder-[#676767] focus:ring-2 focus:ring-[#5da872]"
-                value={personalInfo.name}
-                onChange={(e) => setPersonalInfo({ ...personalInfo, name: e.target.value })}
-                required
-              />
-            </div>
+        
             <div>
               <label htmlFor="rut" className="block text-sm font-medium mb-2 text-[#397e4c]">
                 RUT (para tu boleta)
@@ -188,7 +177,7 @@ export default function PersonalInfoStep({ nextStep, prevStep, updateOrderData, 
             </div>
             <div>
               <label htmlFor="businessRut" className="block text-sm font-medium mb-2 text-[#397e4c]">
-                RUT Empresa (para tu factura)
+                RUT Empresa
               </label>
               <input
                 type="text"
@@ -199,15 +188,56 @@ export default function PersonalInfoStep({ nextStep, prevStep, updateOrderData, 
                 required
                 placeholder="XX.XXX.XXX-X"
               />
-              <p className="text-sm text-gray-400 mt-1">
-                Necesitamos el RUT de la empresa para generar la factura
-              </p>
+            </div>
+            <div>
+              <label htmlFor="businessGiro" className="block text-sm font-medium mb-2 text-[#397e4c]">
+                Giro de la Empresa
+              </label>
+              <input
+                type="text"
+                id="businessGiro"
+                className="w-full p-3 border border-[#676767] rounded-lg bg-[#353535] text-[#ffffff] placeholder-[#676767] focus:ring-2 focus:ring-[#5da872]"
+                value={personalInfo.businessGiro}
+                onChange={(e) => setPersonalInfo({ ...personalInfo, businessGiro: e.target.value })}
+                required
+                placeholder="Ej: Comercio al por menor"
+              />
+            </div>
+           
+            <div>
+          <div>
+          <label htmlFor="rut" className="block text-sm font-medium mb-2 text-[#397e4c]">
+                RUT Personal
+              </label>
+              <input
+                type="text"
+                id="rut"
+                className="w-full p-3 border border-[#676767] rounded-lg bg-[#353535] text-[#ffffff] placeholder-[#676767] focus:ring-2 focus:ring-[#5da872]"
+                value={personalInfo.rut}
+                onChange={(e) => setPersonalInfo({ ...personalInfo, rut: e.target.value })}
+                required
+                placeholder="12.345.678-9"
+              />
+             
+            </div>
             </div>
           </>
         )}
         <div>
-          <label htmlFor="phone" className="block text-sm font-medium mb-2 text-[#397e4c]">
-            Teléfono de contacto
+          <div>    <label htmlFor="name" className="block text-sm font-medium mb-2 text-[#397e4c]">
+            Nombre De quien Recibe
+          </label>
+            <input
+              type="text"
+              id="name"
+              className="w-full p-3 border border-[#676767] rounded-lg bg-[#353535] text-[#ffffff] placeholder-[#676767] focus:ring-2 focus:ring-[#5da872]"
+              value={personalInfo.name}
+              onChange={(e) => setPersonalInfo({ ...personalInfo, name: e.target.value })}
+              required
+            />
+          </div>
+          <label htmlFor="phone" className="block text-sm font-medium mb-2 mt-4 text-[#397e4c]">
+            Teléfono de contacto de quien recibe
           </label>
           <input
             type="tel"
