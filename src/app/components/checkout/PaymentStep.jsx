@@ -10,15 +10,15 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
   const [errors, setErrors] = useState({});
 
   const paymentMethods = [
-    { 
-      id: 'woo_webpay', 
-      name: 'WebPay', 
+    {
+      id: 'woo_webpay',
+      name: 'WebPay',
       description: 'Paga con tarjeta de crédito o débito',
       gateway: 'webpay_plus_rest'
     },
-    { 
-      id: 'woo_mercadopago', 
-      name: 'Mercado Pago', 
+    {
+      id: 'woo_mercadopago',
+      name: 'Mercado Pago',
       description: 'Paga con Mercado Pago',
       gateway: 'woomercadopago_custom'
     }
@@ -37,7 +37,7 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
 
       const selectedMethod = paymentMethods.find(m => m.id === paymentMethod);
 
-     
+
       // Prepare order data for WooCommerce
       const wooCommerceOrderData = {
         payment_method: selectedMethod.gateway,
@@ -101,13 +101,14 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
 
       // Get the payment URL from the WooCommerce response
       const paymentUrl = createdOrder.payment_url;
-      
+
       if (!paymentUrl) {
         throw new Error('No se pudo obtener la URL de pago');
       }
 
-      // Redirect the parent window to the payment URL
-      window.parent.location.href = paymentUrl;
+      // Reemplazar checkout por finalizar-compra manteniendo los parámetros
+      const finalUrl = paymentUrl.replace('/checkout', '/finalizar-compra');
+      window.parent.location.href = finalUrl;
 
     } catch (error) {
       console.error('Error creating order:', error);
@@ -136,9 +137,8 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
         {paymentMethods.map((method) => (
           <div
             key={method.id}
-            className={`border rounded-lg p-4 cursor-pointer transition-colors ${
-              paymentMethod === method.id ? 'border-[#5da872] bg-[#f0f9f2]' : 'border-gray-200'
-            }`}
+            className={`border rounded-lg p-4 cursor-pointer transition-colors ${paymentMethod === method.id ? 'border-[#5da872] bg-[#f0f9f2]' : 'border-gray-200'
+              }`}
             onClick={() => setPaymentMethod(method.id)}
           >
             <div className="flex items-center space-x-3">
