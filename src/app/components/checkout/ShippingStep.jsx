@@ -27,6 +27,7 @@ export default function ShippingStep({ nextStep, prevStep, updateOrderData, orde
   const [comunasData, setComunasData] = useState([]);
   const [showWeightPopup, setShowWeightPopup] = useState(false);
   const [isLoadingShipitPrice, setIsLoadingShipitPrice] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const cartWeight = orderData.cartWeight || 0;
 
@@ -37,8 +38,37 @@ export default function ShippingStep({ nextStep, prevStep, updateOrderData, orde
     "X-Shipit-Email": "gabriel.jofre@cruzeiroempresas.cl",
     "X-Shipit-Access-Token": "VuXw5Yo98WczGy3uxiyz"
   };
+  const isFormValid = () => {
+    if (shippingDetails.type === 'delivery') {
+      // Validar que se haya seleccionado región y comuna
+      if (!shippingDetails.region || !shippingDetails.comuna) {
+        return false;
+      }
+      
+      // Validar que la dirección no esté vacía
+      if (!shippingDetails.address.trim()) {
+        return false;
+      }
+  
+      // Validar que el costo de envío se haya calculado
+      if (isLoadingShipitPrice || shippingDetails.shipping_cost === undefined) {
+        return false;
+      }
+  
+      // Validar que no haya un popup de peso activo
+      if (showWeightPopup) {
+        return false;
+      }
+  
+      return true;
+    }
+  
+    // Para retiro en tienda
+    return true;
+  };
 
   const cargarRegiones = useCallback(async () => {
+    setLoading(true);
     try {
       const response = await fetch(apiUrl, { headers });
       const data = await response.json();
@@ -54,6 +84,8 @@ export default function ShippingStep({ nextStep, prevStep, updateOrderData, orde
       console.log('Regiones cargadas correctamente');
     } catch (error) {
       console.error('Error al cargar regiones:', error);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -218,6 +250,9 @@ const getShipitPrice = async (comuna, weight) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     
+  if (!isFormValid()) {
+    return;
+  }
     const shippingInfo = {
       ...shippingDetails,
       id: shippingDetails.type === 'delivery' ? 
@@ -279,17 +314,24 @@ const getShipitPrice = async (comuna, weight) => {
   );
 
   return (
+    
+
+    
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       className="space-y-6"
     >
+      {loading && (
+  <LoadingSpinner/>
+)}
       <AnimatePresence>
         {showWeightPopup && <WeightPopup />}
       </AnimatePresence>
 
       <div className="text-center">
+  
         <h2 className="text-4xl font-bold text-[#222222]">Detalles de Envío</h2>
         <p className="text-[#222222] mt-4">
           Queremos asegurarnos de que tu pedido llegue de la mejor manera posible. Tu satisfacción es nuestra prioridad.
@@ -411,6 +453,8 @@ const getShipitPrice = async (comuna, weight) => {
                     }));
                   }}
                   required
+                  disabled={loading} // Deshabilitar mientras carga
+
                 >
                   <option value="">Selecciona una región</option>
                   {regions.map(region => (
@@ -452,6 +496,8 @@ const getShipitPrice = async (comuna, weight) => {
                       }
                     }}
                     required
+                    disabled={loadingComunas || !shippingDetails.region || isLoadingShipitPrice} // Deshabilitar mientras carga o no hay región seleccionada
+
                   >
                     <option value="">Selecciona una comuna</option>
                     {comunas.map(comuna => (
@@ -605,27 +651,34 @@ const getShipitPrice = async (comuna, weight) => {
   </motion.button>
   
   <motion.button
-    whileHover={{ scale: 1.05 }}
-    whileTap={{ scale: 0.95 }}
-    type="submit"
-    onClick={() => {
-      updateOrderData('shipping', shippingDetails);
-      nextStep();
-    }}
-    className="px-6 py-3 bg-[#397e4c] text-white rounded-lg font-medium shadow-sm transition-colors duration-200 hover:bg-[#2d6b3d] focus:outline-none focus:ring-2 focus:ring-[#397e4c]/50"
-  >
-    <span className="flex items-center">
-      Ir a la pasarela de pago
-      <svg 
-        className="w-5 h-5" 
-        fill="none" 
-        stroke="currentColor" 
-        viewBox="0 0 24 24"
-      >
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-      </svg>
-    </span>
-  </motion.button>
+  whileHover={isFormValid() ? { scale: 1.05 } : {}}
+  whileTap={isFormValid() ? { scale: 0.95 } : {}}
+  type="submit"
+  disabled={!isFormValid()}
+  className={`px-6 py-3 rounded-lg font-medium shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 ${
+    isFormValid() 
+      ? 'bg-[#397e4c] text-white hover:bg-[#2d6b3d] focus:ring-[#397e4c]/50' 
+      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+  }`}
+>
+  <span className="flex items-center">
+    {isLoadingShipitPrice ? (
+      'Calculando envío...'
+    ) : (
+      <>
+        Ir a la pasarela de pago
+        <svg 
+          className="w-5 h-5 ml-2" 
+          fill="none" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </>
+    )}
+  </span>
+</motion.button>
 </div>
 
         <input type="hidden" name="shipping_ws_region_name" value={shippingDetails.ws_region_name} />
@@ -639,3 +692,24 @@ const getShipitPrice = async (comuna, weight) => {
   );
 }
 
+const LoadingSpinner = () => {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+      <div className="relative">
+        {/* Círculo exterior */}
+        <div className="absolute inset-0 animate-spin rounded-full border-b-4 border-primary"></div>
+        
+        {/* Círculo medio */}
+        <div className="absolute inset-2 animate-spin rounded-full border-b-4 border-secondary animate-[spin_1.5s_linear_infinite]"></div>
+        
+        {/* Círculo interior */}
+        <div className="absolute inset-4 animate-spin rounded-full border-b-4 border-accent animate-[spin_2s_linear_infinite]"></div>
+        
+        {/* Contenedor central */}
+        <div className="h-16 w-16 rounded-full bg-background flex items-center justify-center">
+          <div className="h-10 w-10 rounded-full bg-primary animate-pulse"></div>
+        </div>
+      </div>
+    </div>
+  );
+};
