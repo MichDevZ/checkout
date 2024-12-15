@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { AlertCircle } from 'lucide-react';
+import { createWooCommerceOrder } from '../../../utils/createWooCommerceOrderData'
 
 export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
   const [paymentMethod, setPaymentMethod] = useState('woo_webpay');
@@ -38,74 +39,21 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
       const selectedMethod = paymentMethods.find(m => m.id === paymentMethod);
 
 
-      // Prepare order data for WooCommerce
-      const wooCommerceOrderData = {
-        payment_method: selectedMethod.gateway,
-        payment_method_title: selectedMethod.name,
-        set_paid: false,
-        billing: {
-          first_name: orderData.personalInfo.name.split(' ')[0],
-          last_name: orderData.personalInfo.name.split(' ').slice(1).join(' '),
-          address_1: orderData.shipping.address,
-          city: orderData.shipping.ws_comuna_name,
-          state: orderData.shipping.ws_region_name,
-          postcode: '',
-          country: 'CL',
-          email: orderData.email,
-          phone: orderData.personalInfo.phone,
-          tipo: orderData.personalInfo.type === 'personal' ? 'Boleta' : 'Factura',
-          rut: orderData.personalInfo.rut,
-          // Nuevos campos
-          razon_social: orderData.personalInfo.businessName || '',
-          rut_empresa: orderData.personalInfo.businessRut || '',
-          giro: orderData.personalInfo.businessGiro || '',
-          personal_rut: orderData.personalInfo.rut,
-          nombre_contacto: orderData.personalInfo.name || '', // Nombre de quien recibe
-          telefono_contacto: orderData.personalInfo.phone || '', // Teléfono de quien recibe
-        },
-        shipping: {
-          first_name: orderData.personalInfo.name.split(' ')[0],
-          last_name: orderData.personalInfo.name.split(' ').slice(1).join(' '),
-          address_1: orderData.shipping.address,
-          city: orderData.shipping.ws_comuna_name,
-          state: orderData.shipping.ws_region_name,
-          postcode: '',
-          country: 'CL'
-        },
-        line_items: orderData.cartItems.map(item => ({
-          product_id: item.id,
-          quantity: item.quantity
-        })),
-        shipping_lines: [
-          {
-            method_id: orderData.shipping.id,
-            method_title: orderData.shipping.shiping_method,
-            total: orderData.shipping.shipping_cost.toString()
-          }
-        ]
-      };
-
-      // Create order in WooCommerce
-      const consumerKey = 'ck_688c1f71bf9e218c6ecb582fde9725b3e08da3d9';
-      const consumerSecret = 'cs_f81a648e232d4467208162e18b89d8fdefbb0592';
-      const credentials = btoa(`${consumerKey}:${consumerSecret}`);
-
-      const response = await fetch('https://www.cruzeirogomas.cl/wp-json/wc/v3/orders', {
+      const response = await fetch('/api/create-order', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Basic ${credentials}`
         },
-        body: JSON.stringify(wooCommerceOrderData),
+        body: JSON.stringify({ orderData, selectedMethod }),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || `Error creating order: ${response.status}`);
+        throw new Error(errorData.error || 'Error al crear la orden');
       }
-
+  
       const createdOrder = await response.json();
-
+  
       // Get the payment URL from the WooCommerce response
       const paymentUrl = createdOrder.payment_url;
 
