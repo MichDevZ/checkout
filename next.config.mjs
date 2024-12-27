@@ -13,6 +13,17 @@ const nextConfig = {
     };
     return config;
   },
+
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'www.cruzeirogomas.cl',
+        port: '',
+        pathname: '/**',
+      }
+    ]
+  }
 };
 
 export default nextConfig;

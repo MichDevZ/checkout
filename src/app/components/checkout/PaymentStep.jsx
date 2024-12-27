@@ -24,11 +24,13 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
       gateway: 'woomercadopago_custom'
     }
   ];
-  console.log(orderData)
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsProcessing(true);
     setErrors({});
+
 
     try {
       // Validate necessary data
@@ -53,17 +55,36 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
       }
   
       const createdOrder = await response.json();
-  
-      // Get the payment URL from the WooCommerce response
-      const paymentUrl = createdOrder.payment_url;
+     
+      if (createdOrder.id) {
 
-      if (!paymentUrl) {
-        throw new Error('No se pudo obtener la URL de pago');
+        try {
+          const response = await fetch('/api/webpay', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              amount: 10000,
+              returnUrl: `${window.location.origin}/compra-completada?order_id=${createdOrder.id}`,
+            }),
+          });
+    
+          
+    
+          const data = await response.json();
+          console.log(data)
+          if (data.url) {
+            window.location.href = `${data.url}?token_ws=${data.token}`;
+          } else {
+            alert('Error al iniciar el pago.');
+          }
+        } catch (error) {
+          console.error(error);
+          alert('Error en la transacción.');
+        } finally {
+          setIsProcessing(false);
+        }
+        
       }
-
-      // Reemplazar checkout por finalizar-compra manteniendo los parámetros
-      const finalUrl = paymentUrl.replace('/checkout', '/finalizar-compra');
-      window.parent.location.href = finalUrl;
 
     } catch (error) {
       console.error('Error creating order:', error);
@@ -72,6 +93,10 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
       });
       setIsProcessing(false);
     }
+
+
+
+ 
   };
 
   return (
