@@ -4,117 +4,22 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { shippingCosts, isWithinAmericoVespucioRing } from '../../data/shipping-costs';
 import { Package, Truck, Clock, Headphones, AlertCircle } from 'lucide-react';
+import { calculateShippingCost } from '../../../utils/calculateShippingCost'
+import {isFormValid} from '../../../utils/isFormValid'
+import LoadingSpinner from '../Ui/LoadingSpinner'
 import PopupPeso from './PesoPopup'
+import ShippingAdress from '../Shipping/ShippingAdress';
 
-export default function ShippingStep({ nextStep, prevStep, updateOrderData, orderData }) {
-  const [shippingDetails, setShippingDetails] = useState({
-    address: '',
-    region: '',
-    comuna: '',
-    additionalInfo: '',
-    type: 'delivery',
-    ws_region_name: '',
-    ws_region_id: '',
-    ws_comuna_name: '',
-    ws_comuna_id: '',
-    shipping_cost: 0,
-    shipping_method: ''
-  });
+export default function ShippingStep({ nextStep, prevStep, updateOrderData, orderData, shippingDetails, setShippingDetails, comunas, setComunas }) {
 
   const [shippingCost, setShippingCost] = useState(0);
   const [regions, setRegions] = useState([]);
-  const [comunas, setComunas] = useState([]);
-  const [loadingComunas, setLoadingComunas] = useState(false);
-  const [comunasData, setComunasData] = useState([]);
   const [showWeightPopup, setShowWeightPopup] = useState(false);
   const [isLoadingShipitPrice, setIsLoadingShipitPrice] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const cartWeight = orderData.cartWeight || 0;
 
-  const apiUrl = 'https://api.shipit.cl/v/communes';
-  const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/vnd.shipit.v4",
-    "X-Shipit-Email": "gabriel.jofre@cruzeiroempresas.cl",
-    "X-Shipit-Access-Token": "VuXw5Yo98WczGy3uxiyz"
-  };
-  const isFormValid = () => {
-    if (shippingDetails.type === 'delivery') {
-      // Validar que se haya seleccionado región y comuna
-      if (!shippingDetails.region || !shippingDetails.comuna) {
-        return false;
-      }
-      
-      // Validar que la dirección no esté vacía
-      if (!shippingDetails.address.trim()) {
-        return false;
-      }
-  
-      // Validar que el costo de envío se haya calculado
-      if (isLoadingShipitPrice || shippingDetails.shipping_cost === undefined) {
-        return false;
-      }
-  
-      // Validar que no haya un popup de peso activo
-      if (showWeightPopup) {
-        return false;
-      }
-  
-      return true;
-    }
-  
-    // Para retiro en tienda
-    return true;
-  };
-
-  const cargarRegiones = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(apiUrl, { headers });
-      const data = await response.json();
-      setComunasData(data);
-      const uniqueRegions = [...new Set(data.map(commune => commune.region_name))].map(region => {
-        return { 
-          id: data.find(commune => commune.region_name === region).region_id, 
-          name: region 
-        };
-      });
-      
-      setRegions(uniqueRegions);
-      console.log('Regiones cargadas correctamente');
-    } catch (error) {
-      console.error('Error al cargar regiones:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    cargarRegiones();
-  }, [cargarRegiones]);
-
-  useEffect(() => {
-    if (shippingDetails.region && comunasData.length > 0) {
-      setLoadingComunas(true);
-      const communes = comunasData.filter(commune => commune.region_id == shippingDetails.region);
-      setComunas(communes);
-      
-      const selectedRegion = regions.find(r => r.id === parseInt(shippingDetails.region));
-      if (selectedRegion) {
-        setShippingDetails(prev => ({
-          ...prev,
-          ws_region_name: selectedRegion.name,
-          ws_region_id: shippingDetails.region,
-          comuna: '',
-          ws_comuna_name: '',
-          ws_comuna_id: '',
-          shipping_cost: 0
-        }));
-      }
-      setLoadingComunas(false);
-    }
-  }, [shippingDetails.region, comunasData, regions]);
 
 const getShipitPrice = async (comuna, weight) => {
   try {
@@ -226,22 +131,7 @@ const getShipitPrice = async (comuna, weight) => {
     }
   };
 
-  const calculateShippingCost = (comunaName, cartTotal) => {
-    let cost = 0;
-    for (const [, zone] of Object.entries(shippingCosts.zones)) {
-      if (zone.communes.includes(comunaName.toUpperCase())) {
-        cost = zone.cost;
-        break;
-      }
-    }
 
-    if (cartTotal >= shippingCosts.freeShippingThreshold && 
-        isWithinAmericoVespucioRing(comunaName)) {
-      cost = 0;
-    }
-
-    return cost;
-  };
 
   const isShippingAvailable = (comunaName) => {
     const availableCommunes = Object.values(shippingCosts.zones).flatMap(zone => zone.communes);
@@ -251,8 +141,8 @@ const getShipitPrice = async (comuna, weight) => {
   
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-  if (!isFormValid()) {
+
+  if (!isFormValid(shippingDetails, isLoadingShipitPrice, showWeightPopup)) {
     return;
   }
     const shippingInfo = {
@@ -275,6 +165,11 @@ const getShipitPrice = async (comuna, weight) => {
             setShowWeightPopup={setShowWeightPopup}/>
  
   );
+
+
+  if (!shippingDetails) {
+    return <LoadingSpinner />
+  }
 
   return (
     
@@ -378,99 +273,12 @@ const getShipitPrice = async (comuna, weight) => {
 
           {shippingDetails.type === 'delivery' && (
             <>
-              <div>
-                <label htmlFor="address" className="block text-sm font-medium mb-2 text-[#397e4c]">
-                  Dirección de entrega
-                </label>
-                <input
-                  type="text"
-                  id="address"
-                  className="w-full p-3 border border-[#676767] rounded-lg bg-[#353535] text-[#ffffff] placeholder-[#676767] focus:ring-2 focus:ring-[#5da872]"
-                  value={shippingDetails.address}
-                  onChange={(e) => setShippingDetails({
-                    ...shippingDetails,
-                    address: e.target.value
-                  })}
-                  required
-                  placeholder="Calle, número, depto/casa"
-                />
-              </div>
-              <div>
-                <label htmlFor="region" className="block text-sm font-medium mb-2 text-[#397e4c]">
-                  Región
-                </label>
-                <select
-                  id="region"
-                  className="w-full p-3 border border-[#676767] rounded-lg bg-[#353535] text-[#ffffff] focus:ring-2 focus:ring-[#5da872]"
-                  value={shippingDetails.region}
-                  onChange={(e) => {
-                    const selectedRegion = regions.find(r => r.id === parseInt(e.target.value));
-                    setShippingDetails(prev => ({
-                      ...prev,
-                      region: e.target.value,
-                      ws_region_id: e.target.value,
-                      ws_region_name: selectedRegion ? selectedRegion.name : '',
-                      comuna: '',
-                      ws_comuna_id: '',
-                      ws_comuna_name: ''
-                    }));
-                  }}
-                  required
-                  disabled={loading} // Deshabilitar mientras carga
-
-                >
-                  <option value="">Selecciona una región</option>
-                  {regions.map(region => (
-                    <option key={region.id} value={region.id}>
-                      {region.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label htmlFor="comuna" className="block text-sm font-medium mb-2 text-[#397e4c]">
-                  Comuna
-                </label>
-                {loadingComunas ? (
-                  <div className="w-full p-3 border border-[#676767] rounded-lg bg-[#353535] text-[#ffffff] flex items-center justify-center">
-                    <div className="w-full bg-[#676767] rounded-full h-2">
-                      <div
-                        className="bg-[#5da872] h-2 rounded-full transition-all duration-500 ease-in-out"
-                        style={{ width: '50%' }}
-                      ></div>
-                    </div>
-                    <span className="ml-2 text-sm">Cargando comunas...</span>
-                  </div>
-                ) : (
-                  <select
-                    id="comuna"
-                    className="w-full p-3 border border-[#676767] rounded-lg bg-[#353535] text-[#ffffff] focus:ring-2 focus:ring-[#5da872]"
-                    value={shippingDetails.comuna}
-                    onChange={(e) => {
-                      const selectedComuna = comunas.find(c => c.id === parseInt(e.target.value));
-                      if (selectedComuna) {
-                        setShippingDetails(prev => ({
-                          ...prev,
-                          comuna: e.target.value,
-                          ws_comuna_name: selectedComuna.name,
-                          ws_comuna_id: selectedComuna.id
-                        }));
-                        handleComunaChange(e);
-                      }
-                    }}
-                    required
-                    disabled={loadingComunas || !shippingDetails.region || isLoadingShipitPrice} // Deshabilitar mientras carga o no hay región seleccionada
-
-                  >
-                    <option value="">Selecciona una comuna</option>
-                    {comunas.map(comuna => (
-                      <option key={comuna.id} value={comuna.id}>
-                        {comuna.name}
-                      </option>
-                    ))}
-                  </select>
-                )}
-              </div>
+             <ShippingAdress loading={loading} setLoading={setLoading} 
+             shippingDetails={shippingDetails} 
+             setShippingDetails={setShippingDetails} 
+             handleComunaChange={handleComunaChange}
+             comunas={comunas}
+             setComunas={setComunas} />
               <div>
                 <label htmlFor="additionalInfo" className="block text-sm font-medium mb-2 text-[#397e4c]">
                   Información adicional para la entrega (opcional)
@@ -614,12 +422,12 @@ const getShipitPrice = async (comuna, weight) => {
   </motion.button>
   
   <motion.button
-  whileHover={isFormValid() ? { scale: 1.05 } : {}}
-  whileTap={isFormValid() ? { scale: 0.95 } : {}}
+  whileHover={isFormValid(shippingDetails, isLoadingShipitPrice, showWeightPopup) ? { scale: 1.05 } : {}}
+  whileTap={isFormValid(shippingDetails, isLoadingShipitPrice, showWeightPopup) ? { scale: 0.95 } : {}}
   type="submit"
-  disabled={!isFormValid()}
+  disabled={!isFormValid(shippingDetails, isLoadingShipitPrice, showWeightPopup)}
   className={`px-6 py-3 rounded-lg font-medium shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 ${
-    isFormValid() 
+    isFormValid(shippingDetails, isLoadingShipitPrice, showWeightPopup) 
       ? 'bg-[#397e4c] text-white hover:bg-[#2d6b3d] focus:ring-[#397e4c]/50' 
       : 'bg-gray-300 text-gray-500 cursor-not-allowed'
   }`}
@@ -654,25 +462,3 @@ const getShipitPrice = async (comuna, weight) => {
     </motion.div>
   );
 }
-
-const LoadingSpinner = () => {
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
-      <div className="relative">
-        {/* Círculo exterior */}
-        <div className="absolute inset-0 animate-spin rounded-full border-b-4 border-primary"></div>
-        
-        {/* Círculo medio */}
-        <div className="absolute inset-2 animate-spin rounded-full border-b-4 border-secondary animate-[spin_1.5s_linear_infinite]"></div>
-        
-        {/* Círculo interior */}
-        <div className="absolute inset-4 animate-spin rounded-full border-b-4 border-accent animate-[spin_2s_linear_infinite]"></div>
-        
-        {/* Contenedor central */}
-        <div className="h-16 w-16 rounded-full bg-background flex items-center justify-center">
-          <div className="h-10 w-10 rounded-full bg-primary animate-pulse"></div>
-        </div>
-      </div>
-    </div>
-  );
-};

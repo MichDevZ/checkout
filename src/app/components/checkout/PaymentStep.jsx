@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { AlertCircle } from 'lucide-react';
-import { createWooCommerceOrder } from '../../../utils/createWooCommerceOrderData'
+
 
 export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
   const [paymentMethod, setPaymentMethod] = useState('woo_webpay');
@@ -148,6 +148,16 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
       >
         <h3 className="text-[#5da872] font-semibold text-lg mb-4">Confirma tus datos antes de proceder al pago:</h3>
         <div className="space-y-2 text-[#ffffff]">
+          {
+            orderData.personalInfo.type === 'business' && (
+              <>
+              <p><strong>Nombre de la empresa:</strong> {orderData.personalInfo.businessName}</p>
+              <p><strong>Rut Empresa:</strong> {orderData.personalInfo.businessRut}</p>
+              <p><strong>Giro Empresa:</strong> {orderData.personalInfo.businessGiro}</p>
+              <p><strong>Dirección de facturación:</strong> {orderData.personalInfo.businessBilling} {} </p>
+              </>
+            )
+          }
           <p><strong>Nombre:</strong> {orderData.personalInfo.name}</p>
           <p><strong>Email:</strong> {orderData.email}</p>
           <p><strong>Teléfono:</strong> {orderData.personalInfo.phone}</p>
