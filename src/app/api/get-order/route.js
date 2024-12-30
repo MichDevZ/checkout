@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import axios from 'axios';
 
+export const dynamic = "force-dynamic";
+
   // WooCommerce credentials
   const consumerKey = process.env.NEXT_PUBLIC_CUSTOMERKEY;
   const consumerSecret = process.env.NEXT_PUBLIC_CUSTOMERSECRET;
