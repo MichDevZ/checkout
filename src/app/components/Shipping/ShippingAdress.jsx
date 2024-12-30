@@ -95,6 +95,7 @@ export const ShippingAdress = ({personalInfo ,setPersonalInfo ,type, loading ,se
                 ws_comuna_id: '',
                 ws_comuna_name: ''
               }));
+              setPersonalInfo({...personalInfo, businessRegion: selectedRegion.name})
             }}
             required
             disabled={loading} // Deshabilitar mientras carga
@@ -138,6 +139,10 @@ export const ShippingAdress = ({personalInfo ,setPersonalInfo ,type, loading ,se
                   }));
                   if (handleComunaChange) {
                     handleComunaChange(e)
+                  }
+                  if (personalInfo) {
+
+                    setPersonalInfo({...personalInfo, businessComune: selectedComuna.name})
                   }
                 }
               }}

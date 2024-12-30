@@ -23,6 +23,8 @@ export default function PersonalInfoStep({ nextStep, prevStep, updateOrderData, 
     businessName: '',
     businessRut: '',
     businessBilling: "",
+    businessRegion: "",
+    businessComune: "",
     businessGiro: '', // Nuevo campo para el giro
     businessContact: '', // Nuevo campo para el nombre del contacto
     businessPhone: '', // Nuevo campo para el teléfono de la empresa

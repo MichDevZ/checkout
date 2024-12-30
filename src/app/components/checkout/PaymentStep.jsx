@@ -154,7 +154,7 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
               <p><strong>Nombre de la empresa:</strong> {orderData.personalInfo.businessName}</p>
               <p><strong>Rut Empresa:</strong> {orderData.personalInfo.businessRut}</p>
               <p><strong>Giro Empresa:</strong> {orderData.personalInfo.businessGiro}</p>
-              <p><strong>Dirección de facturación:</strong> {orderData.personalInfo.businessBilling} {} </p>
+              <p><strong>Dirección de facturación:</strong> {orderData.personalInfo.businessBilling}, {orderData.personalInfo.businessComune}, {orderData.personalInfo.businessRegion} </p>
               </>
             )
           }
