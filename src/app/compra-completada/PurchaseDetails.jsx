@@ -1,8 +1,34 @@
+'use client'
+
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { CheckCircle } from 'lucide-react';
+import { sendGTMEvent } from '@next/third-parties/google';
+import { useEffect } from 'react';
 
-export default function PurchaseDetails({ orderData, payment }) {
+export default function PurchaseDetails({ orderData, payment, }) {
+
+  useEffect(() => {
+    
+    sendGTMEvent({event: 'purchase', ecommerce: {
+      transaction_id: orderData.id,
+      value: orderData.total,
+      shipping: orderData.shipping_total,
+      currency: 'CLP',
+      items: orderData.line_items.map(item => ({
+        item_id: item.id,
+        item_name: item.name,
+        currency: 'CLP',
+        price: item.price,
+        quantity: item.quantity,
+      }))
+    }})
+  
+ 
+  }, [orderData, payment])
+  
+
+
 
   return (
     <div className="flex justify-center items-center min-h-screen">
@@ -121,6 +147,7 @@ export default function PurchaseDetails({ orderData, payment }) {
               transition={{ delay: 0.7, duration: 0.5 }}
               className="text-center mt-8"
             >
+      
               <p className="text-lg mb-2">¿Tienes alguna pregunta sobre tu pedido?</p>
               <p className="font-semibold text-[#397e4c]">Contáctanos al +56 9 1234 5678</p>
             </motion.div>

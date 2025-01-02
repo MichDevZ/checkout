@@ -240,6 +240,8 @@ export default function PersonalInfoStep({ nextStep, prevStep, updateOrderData, 
              
             </div>
             </div>
+
+            <ShippingAdress  personalInfo={personalInfo} setPersonalInfo={setPersonalInfo} type={personalInfo.type} loading={loading} setLoading={setLoading} shippingDetails={shippingDetails} setShippingDetails={setShippingDetails} comunas={comunas} setComunas={setComunas} />
           </>
         )}
         <div>
@@ -268,7 +270,7 @@ export default function PersonalInfoStep({ nextStep, prevStep, updateOrderData, 
             placeholder="+569XXXXXXXX"
           />
 
-          <ShippingAdress  personalInfo={personalInfo} setPersonalInfo={setPersonalInfo} type={personalInfo.type} loading={loading} setLoading={setLoading} shippingDetails={shippingDetails} setShippingDetails={setShippingDetails} comunas={comunas} setComunas={setComunas} />
+          
           <p className="text-sm text-gray-400 mt-1">
             Te llamaremos a este número cuando realicemos el envío de tu pedido
           </p>

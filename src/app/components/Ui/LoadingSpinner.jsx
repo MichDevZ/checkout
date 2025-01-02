@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
 
-const LoadingSpinner = () => {
+const LoadingSpinner = ({isProccesing}) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
       <div className="relative">
@@ -19,6 +19,11 @@ const LoadingSpinner = () => {
           <div className="h-10 w-10 rounded-full bg-primary animate-pulse"></div>
         </div>
       </div>
+
+      {isProccesing} {
+        <p className='ml-3'>Estamos procesando su pago, por favor espere..</p>
+      }
+
     </div>
   )
 }
