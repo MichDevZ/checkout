@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Lock} from 'lucide-react';
+import Image from 'next/image';
 
 
 export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
@@ -161,7 +162,10 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
           <p><strong>Nombre:</strong> {orderData.personalInfo.name}</p>
           <p><strong>Email:</strong> {orderData.email}</p>
           <p><strong>Teléfono:</strong> {orderData.personalInfo.phone}</p>
+          {orderData.shipping.address && (
+
           <p><strong>Dirección de envío:</strong> {orderData.shipping.address}, {orderData.shipping.ws_comuna_name}, {orderData.shipping.ws_region_name}</p>
+          )}
           <p><strong>Método de envío:</strong> {orderData.shipping.type === 'delivery' ? 'Envío a domicilio' : 'Retiro en tienda'}</p>
           <p><strong>Costo de envío:</strong> ${orderData.shipping.shipping_cost.toLocaleString()}</p>
           <p><strong>Total del pedido:</strong> ${((orderData.cartTotal || 0) + (orderData.shipping.shipping_cost || 0)).toLocaleString()}</p>
@@ -205,9 +209,17 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
           <AlertCircle className="w-5 h-5" />
           <h3 className="font-semibold">Pago Seguro</h3>
         </div>
-        <p className="text-[#ffffff] mt-2">
-          Tus pagos están protegidos por {paymentMethod === 'woo_webpay' ? 'WebPay' : 'Mercado Pago'}.
+        <p className="text-[#ffffff] mt-2 flex items-center">
+          Tus pagos están protegidos por {paymentMethod === 'woo_webpay' ? 'WebPay' : 'Mercado Pago'}. 
+          <Lock size={18}
+          style={{marginLeft: 3}} />
         </p>
+        <Image 
+        style={{marginTop: 3}}
+          src={'/logo-web-pay-plus.png'}
+          width={100}
+          height={100}
+        />
       </motion.div>
     </motion.div>
   );
