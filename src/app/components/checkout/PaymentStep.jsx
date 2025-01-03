@@ -41,12 +41,14 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
 
       const selectedMethod = paymentMethods.find(m => m.id === paymentMethod);
 
+      const amount = orderData.cartTotal  + orderData.shipping.shipping_cost
+
 
       const response = await fetch('/api/create-order', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-        },
+        }, 
         body: JSON.stringify({ orderData, selectedMethod }),
       });
   
@@ -64,7 +66,7 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              amount: 10000,
+              amount: createdOrder.total,
               returnUrl: `${window.location.origin}/compra-completada?order_id=${createdOrder.id}`,
             }),
           });

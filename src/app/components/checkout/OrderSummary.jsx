@@ -7,8 +7,6 @@ import { ChevronDown, ChevronUp, ShoppingBag, Truck, CreditCard } from 'lucide-r
 export default function OrderSummary({ orderData, shippingCost, isPaymentStep, cartData }) {
   const [isExpanded, setIsExpanded] = useState(true);
 
-  console.log('OrderSummary - cartData:', cartData);
-
   const subtotal = cartData.subtotal;
   const shipping = shippingCost ?? cartData.shipping;
   const total = cartData.total;
