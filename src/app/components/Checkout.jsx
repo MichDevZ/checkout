@@ -41,7 +41,6 @@ export default function Checkout() {
 
 
   const cartData = useCartData();
-  console.log('Checkout - cartData:', cartData);
 
   // Actualizar orderData cuando cartData cambie
   useEffect(() => {

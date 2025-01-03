@@ -63,10 +63,10 @@ export default function PersonalInfoStep({ nextStep, prevStep, updateOrderData, 
     >
       <div className="text-center">
         <h2 className="text-3xl font-bold text-[#222222]">Tus Datos Personales</h2>
-        <p className="text-[#222222] mt-2" Style="margin-top:16px;">
+        <p className="text-[#222222] mt-2" >
           Queremos conocerte mejor para brindarte la mejor experiencia posible
         </p>
-        <div className="grid grid-cols-2 gap-4 w-full" Style="margin-top:24px;">
+        <div className="grid grid-cols-2 gap-4 w-full" >
           {['personal', 'business'].map((type) => (
             <motion.label
               key={type}

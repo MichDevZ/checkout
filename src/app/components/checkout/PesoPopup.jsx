@@ -72,10 +72,8 @@ const createWooCommerceOrder = async (orderData,shippingDetails) => {
     }
 
     const createdOrder = await response.json();
-    console.log('Orden creada con éxito:', createdOrder);
     return createdOrder;
   } catch (error) {
-    console.error('Error al crear la orden:', error);
     throw error;
   }
 };
