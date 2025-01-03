@@ -17,7 +17,7 @@ export async function PATCH(req) {
       }
 
         const {data} = await axios.patch(
-            `https://www.cruzeirogomas.cl/wp-json/wc/v3/orders/${orderId}`, {
+            `https://cruzeirogomas.cloudhub.cl//wp-json/wc/v3/orders/${orderId}`, {
                 status: 'processing'
             },
             {

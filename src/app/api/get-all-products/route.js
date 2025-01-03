@@ -15,7 +15,7 @@ export async function GET(req) {
     try {
 
         const {data} = await axios.get(
-            `https://www.cruzeirogomas.cl/wp-json/wc/v3/products`,
+            `https://cruzeirogomas.cloudhub.cl//wp-json/wc/v3/products`,
             {
               headers: {
                 'Content-Type': 'application/json',

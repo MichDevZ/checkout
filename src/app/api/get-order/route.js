@@ -20,7 +20,7 @@ export async function GET(req) {
       }
 
         const {data} = await axios.get(
-            `https://www.cruzeirogomas.cl/wp-json/wc/v3/orders/${orderId}`,
+            `https://cruzeirogomas.cloudhub.cl//wp-json/wc/v3/orders/${orderId}`,
             {
               headers: {
                 'Content-Type': 'application/json',

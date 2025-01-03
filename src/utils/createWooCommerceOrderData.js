@@ -63,7 +63,7 @@ export const createWooCommerceOrder  = async (orderData, selectedMethod) => {
 
     // Make the API request to WooCommerce
     const response = await axios.post(
-      'https://www.cruzeirogomas.cl/wp-json/wc/v3/orders',
+      'https://cruzeirogomas.cloudhub.cl//wp-json/wc/v3/orders',
       wooCommerceOrderData,
       {
         headers: {
