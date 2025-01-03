@@ -66,7 +66,7 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              amount: createdOrder.total,
+              amount: 10000,
               returnUrl: `${window.location.origin}/compra-completada?order_id=${createdOrder.id}`,
             }),
           });

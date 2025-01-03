@@ -10,7 +10,7 @@ const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPA
 export async function POST(req) { 
 
     try {
-        const { token, orderId } = await req.json();
+        const { token } = await req.json();
 
        const response = await tx.commit(token);
 
