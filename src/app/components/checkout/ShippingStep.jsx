@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { shippingCosts, isWithinAmericoVespucioRing } from '../../data/shipping-costs';
+import { shippingCosts } from '../../data/shipping-costs';
 import { Package, Truck, Clock, Headphones, AlertCircle } from 'lucide-react';
 import { calculateShippingCost } from '../../../utils/calculateShippingCost'
 import {isFormValid} from '../../../utils/isFormValid'
