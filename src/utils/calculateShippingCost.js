@@ -1,4 +1,4 @@
-  import { isWithinAmericoVespucioRing } from '../app/data/shipping-costs'
+  import { isWithinAmericoVespucioRing, shippingCosts } from '../app/data/shipping-costs'
   
   export const calculateShippingCost = (comunaName, cartTotal) => {
     let cost = 0;
