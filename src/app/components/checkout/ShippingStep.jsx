@@ -13,7 +13,6 @@ import ShippingAdress from '../Shipping/ShippingAdress';
 export default function ShippingStep({ nextStep, prevStep, updateOrderData, orderData, shippingDetails, setShippingDetails, comunas, setComunas }) {
 
   const [shippingCost, setShippingCost] = useState(0);
-  const [regions, setRegions] = useState([]);
   const [showWeightPopup, setShowWeightPopup] = useState(false);
   const [isLoadingShipitPrice, setIsLoadingShipitPrice] = useState(false);
   const [loading, setLoading] = useState(true);
