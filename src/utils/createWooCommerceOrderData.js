@@ -42,7 +42,7 @@ export const createWooCommerceOrder  = async (orderData, selectedMethod) => {
       },
       line_items: orderData.cartItems.map(item => ({
         product_id: item.id,
-        quantity: item.quantity || 1,
+        quantity: item.quantity,
       })),
       shipping_lines: [
         {
@@ -57,13 +57,9 @@ export const createWooCommerceOrder  = async (orderData, selectedMethod) => {
       ]
     };
 
-
-    console.log({'wooCommerceOrderData': wooCommerceOrderData.line_items})
-
-
     // Make the API request to WooCommerce
     const response = await axios.post(
-      'https://cruzeirogomas.cl//wp-json/wc/v3/orders',
+      'https://www.cruzeirogomas.cl/wp-json/wc/v3/orders',
       wooCommerceOrderData,
       {
         headers: {
