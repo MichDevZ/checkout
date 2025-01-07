@@ -42,7 +42,7 @@ export const createWooCommerceOrder  = async (orderData, selectedMethod) => {
       },
       line_items: orderData.cartItems.map(item => ({
         product_id: item.id,
-        quantity: item.quantity,
+        quantity: item.quantity || 1,
       })),
       shipping_lines: [
         {
@@ -56,7 +56,6 @@ export const createWooCommerceOrder  = async (orderData, selectedMethod) => {
         }
       ]
     };
-
 
 
     // Make the API request to WooCommerce
