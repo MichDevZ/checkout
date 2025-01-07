@@ -56,9 +56,9 @@ export const shippingCosts = {
 
 export const isWithinAmericoVespucioRing = (commune) => {
   const innerCommunes = [
-    'SANTIAGO',
+    'SANTIAGO CENTRO',
     'PROVIDENCIA',
-    'ÑUÑOA',
+    'NUNOA',
     'SAN MIGUEL',
     'SAN JOAQUIN',
     'MACUL',
