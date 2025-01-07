@@ -58,7 +58,7 @@ export const createWooCommerceOrder  = async (orderData, selectedMethod) => {
     };
 
 
-    console.log({'wooCommerceOrderData': wooCommerceOrderData})
+    console.log({'wooCommerceOrderData': wooCommerceOrderData.line_items})
 
 
     // Make the API request to WooCommerce
