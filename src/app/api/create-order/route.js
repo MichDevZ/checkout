@@ -12,7 +12,7 @@ export async function POST(req) {
   
       // Crear la orden usando la función utilitaria
       const createdOrder = await createWooCommerceOrder(orderData, selectedMethod);
-  
+
       // Retornar la respuesta con el resultado
       return new Response(JSON.stringify(createdOrder), { status: 200, headers: { 'Content-Type': 'application/json' } });
     } catch (error) {

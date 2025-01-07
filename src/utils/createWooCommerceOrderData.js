@@ -58,8 +58,6 @@ export const createWooCommerceOrder  = async (orderData, selectedMethod) => {
     };
 
 
-    console.log(wooCommerceOrderData)
-
 
     // Make the API request to WooCommerce
     const response = await axios.post(
