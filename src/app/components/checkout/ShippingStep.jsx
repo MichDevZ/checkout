@@ -19,6 +19,8 @@ export default function ShippingStep({ nextStep, prevStep, updateOrderData, orde
 
   const cartWeight = orderData.cartWeight || 0;
 
+  console.log(cartWeight)
+
 
 const getShipitPrice = async (comuna, weight) => {
   try {

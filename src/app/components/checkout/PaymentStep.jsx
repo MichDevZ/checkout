@@ -18,12 +18,12 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
       description: 'Paga con tarjeta de crédito o débito',
       gateway: 'webpay_plus_rest'
     },
-    {
-      id: 'woo_mercadopago',
-      name: 'Mercado Pago',
-      description: 'Paga con Mercado Pago',
-      gateway: 'woomercadopago_custom'
-    }
+    // {
+    //   id: 'woo_mercadopago',
+    //   name: 'Mercado Pago',
+    //   description: 'Paga con Mercado Pago',
+    //   gateway: 'woomercadopago_custom'
+    // }
   ];
 
 
