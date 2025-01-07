@@ -41,6 +41,7 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
 
       const selectedMethod = paymentMethods.find(m => m.id === paymentMethod);
 
+
       console.log(orderData)
 
 
