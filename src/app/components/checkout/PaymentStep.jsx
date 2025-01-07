@@ -42,9 +42,6 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
       const selectedMethod = paymentMethods.find(m => m.id === paymentMethod);
 
 
-      console.log(orderData)
-
-
       const response = await fetch('/api/create-order', {
         method: 'POST',
         headers: {
@@ -52,6 +49,7 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
         }, 
         body: JSON.stringify({ orderData, selectedMethod }),
       });
+
   
       if (!response.ok) {
         const errorData = await response.json();
@@ -61,6 +59,7 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
       const createdOrder = await response.json();
      
       if (createdOrder.id) {
+
 
         try {
           const response = await fetch('/api/webpay', {
