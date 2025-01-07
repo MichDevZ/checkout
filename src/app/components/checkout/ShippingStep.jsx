@@ -16,9 +16,10 @@ export default function ShippingStep({ nextStep, prevStep, updateOrderData, orde
   const [showWeightPopup, setShowWeightPopup] = useState(false);
   const [isLoadingShipitPrice, setIsLoadingShipitPrice] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [comune, setComune] = useState(true);
 
   const cartWeight = orderData.cartWeight || 0;
-  const selectedComuna = comunas.find(c => c.id === parseInt(e.target.value));
+
 
 
 const getShipitPrice = async (comuna, weight) => {
@@ -87,8 +88,14 @@ const getShipitPrice = async (comuna, weight) => {
 };
 
   const handleComunaChange = async (e) => {
+
+    const selectedComuna = comunas.find(c => c.id === parseInt(e.target.value));
    
-    if (!selectedComuna) return;
+    if (!selectedComuna) {
+      return
+    } else {
+      setComune(selectedComuna)
+    }
 
     try {
       const isDirectShipping = isShippingAvailable(selectedComuna.name);
@@ -425,7 +432,7 @@ const getShipitPrice = async (comuna, weight) => {
   whileHover={isFormValid(shippingDetails, isLoadingShipitPrice, showWeightPopup) ? { scale: 1.05 } : {}}
   whileTap={isFormValid(shippingDetails, isLoadingShipitPrice, showWeightPopup) ? { scale: 0.95 } : {}}
   type="submit"
-  disabled={!isFormValid(shippingDetails, isLoadingShipitPrice, showWeightPopup)|| !isShippingAvailable(selectedComuna.name && cartWeight > 100)}
+  disabled={!isFormValid(shippingDetails, isLoadingShipitPrice, showWeightPopup)|| !isShippingAvailable(comune.name && cartWeight > 100)}
   className={`px-6 py-3 rounded-lg font-medium shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 ${
     isFormValid(shippingDetails, isLoadingShipitPrice, showWeightPopup) 
       ? 'bg-[#397e4c] text-white hover:bg-[#2d6b3d] focus:ring-[#397e4c]/50' 
