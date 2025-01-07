@@ -18,6 +18,7 @@ export default function ShippingStep({ nextStep, prevStep, updateOrderData, orde
   const [loading, setLoading] = useState(true);
 
   const cartWeight = orderData.cartWeight || 0;
+  const selectedComuna = comunas.find(c => c.id === parseInt(e.target.value));
 
 
 const getShipitPrice = async (comuna, weight) => {
@@ -86,7 +87,7 @@ const getShipitPrice = async (comuna, weight) => {
 };
 
   const handleComunaChange = async (e) => {
-    const selectedComuna = comunas.find(c => c.id === parseInt(e.target.value));
+   
     if (!selectedComuna) return;
 
     try {
