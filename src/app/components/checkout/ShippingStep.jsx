@@ -425,7 +425,7 @@ const getShipitPrice = async (comuna, weight) => {
   whileHover={isFormValid(shippingDetails, isLoadingShipitPrice, showWeightPopup) ? { scale: 1.05 } : {}}
   whileTap={isFormValid(shippingDetails, isLoadingShipitPrice, showWeightPopup) ? { scale: 0.95 } : {}}
   type="submit"
-  disabled={!isFormValid(shippingDetails, isLoadingShipitPrice, showWeightPopup)|| !isShippingAvailable(selectedComuna.name || cartWeight > 100)}
+  disabled={!isFormValid(shippingDetails, isLoadingShipitPrice, showWeightPopup)|| !isShippingAvailable(selectedComuna.name && cartWeight > 100)}
   className={`px-6 py-3 rounded-lg font-medium shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 ${
     isFormValid(shippingDetails, isLoadingShipitPrice, showWeightPopup) 
       ? 'bg-[#397e4c] text-white hover:bg-[#2d6b3d] focus:ring-[#397e4c]/50' 
