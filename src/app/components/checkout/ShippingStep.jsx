@@ -19,10 +19,7 @@ export default function ShippingStep({ nextStep, prevStep, updateOrderData, orde
   const [loading, setLoading] = useState(true);
   const [comune, setComune] = useState('')
  
-  const cartWeight = 110
-  
-  
-  // orderData.cartWeight || 0;
+  const cartWeight = orderData.cartWeight || 0;
 
 
   const disabled = !isFormValid(shippingDetails, isLoadingShipitPrice, 
