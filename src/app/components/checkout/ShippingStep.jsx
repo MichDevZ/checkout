@@ -6,6 +6,7 @@ import { shippingCosts } from '../../data/shipping-costs';
 import { Package, Truck, Clock, Headphones, AlertCircle } from 'lucide-react';
 import { calculateShippingCost } from '../../../utils/calculateShippingCost'
 import {isFormValid} from '../../../utils/isFormValid'
+import { isWithinAmericoVespucioRing}  from '../../data/shipping-costs'
 import LoadingSpinner from '../Ui/LoadingSpinner'
 import PopupPeso from './PesoPopup'
 import ShippingAdress from '../Shipping/ShippingAdress';
@@ -16,10 +17,16 @@ export default function ShippingStep({ nextStep, prevStep, updateOrderData, orde
   const [showWeightPopup, setShowWeightPopup] = useState(false);
   const [isLoadingShipitPrice, setIsLoadingShipitPrice] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [comune, setComune] = useState(true);
+  const [comune, setComune] = useState('')
+ 
+  const cartWeight = 110
+  
+  
+  // orderData.cartWeight || 0;
 
-  const cartWeight = orderData.cartWeight || 0;
 
+  const disabled = !isFormValid(shippingDetails, isLoadingShipitPrice, 
+        showWeightPopup) || (!isWithinAmericoVespucioRing(comune) && cartWeight > 100)
 
 
 const getShipitPrice = async (comuna, weight) => {
@@ -91,11 +98,9 @@ const getShipitPrice = async (comuna, weight) => {
 
     const selectedComuna = comunas.find(c => c.id === parseInt(e.target.value));
    
-    if (!selectedComuna) {
-      return
-    } else {
-      setComune(selectedComuna)
-    }
+    if (!selectedComuna) return;
+
+    setComune(selectedComuna.name)
 
     try {
       const isDirectShipping = isShippingAvailable(selectedComuna.name);
@@ -116,6 +121,7 @@ const getShipitPrice = async (comuna, weight) => {
             shipping_cost: shipitCost,
             shipping_method: 'shipit'
           }));
+
         } catch (error) {
           console.error('Error Shipit:', error);
           setShowWeightPopup(true);
@@ -129,6 +135,7 @@ const getShipitPrice = async (comuna, weight) => {
           shipping_cost: cost,
           shipping_method: 'direct'
         }));
+
       }
     } catch (error) {
       console.error('Error al procesar comuna:', error);
@@ -432,9 +439,9 @@ const getShipitPrice = async (comuna, weight) => {
   whileHover={isFormValid(shippingDetails, isLoadingShipitPrice, showWeightPopup) ? { scale: 1.05 } : {}}
   whileTap={isFormValid(shippingDetails, isLoadingShipitPrice, showWeightPopup) ? { scale: 0.95 } : {}}
   type="submit"
-  disabled={!isFormValid(shippingDetails, isLoadingShipitPrice, showWeightPopup)|| !isShippingAvailable(comune.name) && cartWeight > 100}
+  disabled={disabled}
   className={`px-6 py-3 rounded-lg font-medium shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 ${
-    isFormValid(shippingDetails, isLoadingShipitPrice, showWeightPopup) 
+    !disabled 
       ? 'bg-[#397e4c] text-white hover:bg-[#2d6b3d] focus:ring-[#397e4c]/50' 
       : 'bg-gray-300 text-gray-500 cursor-not-allowed'
   }`}
