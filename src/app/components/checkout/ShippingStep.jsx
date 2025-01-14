@@ -19,11 +19,14 @@ export default function ShippingStep({ nextStep, prevStep, updateOrderData, orde
   const [loading, setLoading] = useState(true);
   const [comune, setComune] = useState('')
  
+
   const cartWeight = orderData.cartWeight || 0;
 
+  console.log(shippingDetails.type)
 
   const disabled = !isFormValid(shippingDetails, isLoadingShipitPrice, 
-        showWeightPopup) || (!isWithinAmericoVespucioRing(comune) && cartWeight > 100)
+        showWeightPopup) || (!isWithinAmericoVespucioRing(comune) 
+        && cartWeight > 100 && shippingDetails.type === 'delivery')  
 
 
 const getShipitPrice = async (comuna, weight) => {
