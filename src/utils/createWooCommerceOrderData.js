@@ -35,6 +35,7 @@ export const createWooCommerceOrder  = async (orderData, selectedMethod) => {
         first_name: orderData.personalInfo.name.split(' ')[0],
         last_name: orderData.personalInfo.name.split(' ').slice(1).join(' '),
         address_1: orderData.shipping.address,
+        address_2: orderData.shipping.additionalInfo,
         city: orderData.shipping.ws_comuna_name,
         state: orderData.shipping.ws_region_name,
         postcode: '',

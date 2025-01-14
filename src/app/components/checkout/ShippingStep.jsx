@@ -387,7 +387,7 @@ const getShipitPrice = async (comuna, weight) => {
                         </motion.span>
                       )}
                     </p>
-                    {shippingCost > 0 && orderData.cartTotal < shippingCosts.freeShippingThreshold && (
+                    {shippingCost > 0 && orderData.cartTotal < shippingCosts.freeShippingThreshold && isWithinAmericoVespucioRing(comune) &&  (
                       <motion.div 
                         className="mt-6"
                         initial={{ opacity: 0, y: 20 }}
