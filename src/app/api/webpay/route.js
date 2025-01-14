@@ -2,7 +2,7 @@ import { WebpayPlus } from 'transbank-sdk';
 import { NextResponse } from 'next/server';
 import { Options, IntegrationApiKeys, Environment, IntegrationCommerceCodes } from 'transbank-sdk'; 
 
-const tx = new WebpayPlus.Transaction(new Options('597051916610', 'f5858c5a-80f3-4407-b9fb-04d0ee2b9b91', Environment.Production));
+const tx = new WebpayPlus.Transaction(new Options(IntegrationApiKeys.WEBPAY, IntegrationCommerceCodes.WEBPAY_PLUS, Environment.Integration));
 
   
 

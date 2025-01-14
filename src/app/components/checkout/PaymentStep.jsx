@@ -27,6 +27,9 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
   ];
 
 
+  console.log(orderData)
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsProcessing(true);
