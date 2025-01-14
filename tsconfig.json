@@ -29,7 +29,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-, "src/app/api/update-payment-status/route.js"  ],
+, "src/app/api/update-payment-status/route.js", "src/app/admin/page.jsx", "src/app/api/handle-file/route.js"  ],
   "exclude": [
     "node_modules"
   ]
