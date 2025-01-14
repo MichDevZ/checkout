@@ -375,7 +375,7 @@ const getShipitPrice = async (comuna, weight) => {
                     </p>
                     <p className="text-base text-[#ffffff] leading-relaxed">
                       Nos esforzamos por ofrecerte la mejor experiencia de envío 🚚💨
-                      {shippingCost > 0 && orderData.cartTotal < shippingCosts.freeShippingThreshold && (
+                      {shippingCost > 0 && orderData.cartTotal < shippingCosts.freeShippingThreshold && isWithinAmericoVespucioRing(comune) &&  (
                         <motion.span 
                           className="block mt-2"
                           initial={{ opacity: 0, y: 10 }}
