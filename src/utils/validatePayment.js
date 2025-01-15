@@ -10,10 +10,8 @@ export const validatePayment = async (setValidatePayment) => {
       const orderId = urlParams.get('order_id');
 
       const {data} = await axios.post('/api/validate-payment', {
-          token,
-          orderId
+          token
       } )
-
 
       if (data.response_code === 0) {
        await axios.patch('/api/update-payment-status', {
