@@ -104,57 +104,6 @@ export default function PersonalInfoStep({ nextStep, prevStep, updateOrderData, 
           ))}
         </div>
         <AnimatePresence>
-          {showFreeShippingAlert && amountForFreeShipping > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: -50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -50 }}
-              transition={{ duration: 0.5 }}
-              className="bg-gradient-to-r from-[#397e4c] to-[#5da872] text-white p-6 rounded-lg mt-6 shadow-lg relative overflow-hidden"
-            >
-              <motion.div
-                className="absolute inset-0 bg-white opacity-10"
-                animate={{
-                  scale: [1, 1.2, 1],
-                  rotate: [0, 10, -10, 0],
-                }}
-                transition={{
-                  duration: 5,
-                  repeat: Infinity,
-                  repeatType: "reverse",
-                }}
-              />
-              <div className="relative z-10">
-                <motion.div
-                  animate={{ rotate: [0, 15, -15, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="text-4xl mb-2"
-                >
-                  🚚✨
-                </motion.div>
-                <h3 className="text-xl font-bold mb-2">¡Estás cerca del envío gratis!</h3>
-                <p className="text-lg mb-4">
-                  Agrega solo ${amountForFreeShipping.toLocaleString()} más a tu compra
-                </p>
-                <motion.div
-                  className="w-full bg-white rounded-full h-2 mb-4"
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: cartTotal / shippingCosts.freeShippingThreshold }}
-                  transition={{ duration: 1, delay: 0.5 }}
-                />
-                {/* Button hidden for now
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="bg-white text-[#397e4c] px-4 py-2 rounded-full font-semibold flex items-center justify-center mx-auto"
-                >
-                  <span>Ver productos recomendados</span>
-                  <ArrowRight className="ml-2" size={16} />
-                </motion.button>
-                */}
-              </div>
-            </motion.div>
-          )}
         </AnimatePresence>
       </div>
       <form onSubmit={handleSubmit} className="space-y-4">

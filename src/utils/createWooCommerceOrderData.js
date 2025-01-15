@@ -55,6 +55,32 @@ export const createWooCommerceOrder  = async (orderData, selectedMethod) => {
             : 'Retiro en tienda',
           total: orderData.shipping.shipping_cost.toString()
         }
+      ], 
+      meta_data: [
+        {
+          key: '_tipo_documento',
+          value: orderData.personalInfo.type === 'business' ? 'factura' : 'boleta'
+        },
+        {
+          key: '_razon_social',
+          value: orderData.personalInfo.businessName
+        },
+        {
+          key: '_rut_empresa',
+          value: orderData.personalInfo.businessRut
+        },
+        {
+          key: '_giro_empresa',
+          value: orderData.personalInfo.businessGiro
+        },
+        {
+          key: '_direccion_facturacion',
+          value: orderData.personalInfo.businessBilling
+        },
+        {
+          key: '_region_facturacion',
+          value: orderData.personalInfo.businessComune + ', ' + orderData.personalInfo.businessRegion
+        },
       ]
     };
 
