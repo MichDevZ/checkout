@@ -22,11 +22,13 @@ export default function ShippingStep({ nextStep, prevStep, updateOrderData, orde
 
   const cartWeight = orderData.cartWeight || 0;
 
-  console.log(shippingDetails.type)
+ 
+
 
   const disabled = !isFormValid(shippingDetails, isLoadingShipitPrice, 
         showWeightPopup) || (!isWithinAmericoVespucioRing(comune) 
-        && cartWeight > 100 && shippingDetails.type === 'delivery')  
+        && cartWeight > 100 && shippingDetails.type === 'delivery')  || 
+        (shippingDetails.type !== 'delivery' && !orderData.tienda )
 
 
 const getShipitPrice = async (comuna, weight) => {
@@ -49,7 +51,7 @@ const getShipitPrice = async (comuna, weight) => {
       }
     };
 
-    console.log('Requesting Shipit price:', requestBody);
+   
 
     const response = await fetch('https://api.shipit.cl/v/rates', {
       method: 'POST',
@@ -63,7 +65,6 @@ const getShipitPrice = async (comuna, weight) => {
     });
 
     const data = await response.json();
-    console.log('Shipit response:', data);
 
     if (!response.ok) {
       throw new Error(data.message || 'Error al obtener tarifa de envío');
@@ -163,7 +164,7 @@ const getShipitPrice = async (comuna, weight) => {
       ...shippingDetails,
       id: shippingDetails.type === 'delivery' ? 
         (shippingDetails.shipping_method === 'shipit' ? '7' : '8') : '9', // 1: envío directo, 2: shipit, 3: retiro en tienda
-      tipo: shippingDetails.type === 'delivery' ? 'Despacho a domicilio' : 'Retiro en tienda'
+      tipo: shippingDetails.type === 'delivery' ? 'Despacho a domicilio' : 'Retiro en tienda',
     };
   
     // Actualizar el orderData con toda la información
@@ -284,6 +285,21 @@ const getShipitPrice = async (comuna, weight) => {
               Retiro en tienda
             </label>
           </div>
+
+          {shippingDetails.type !== 'delivery' && (
+            <>
+                <label for="countries" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Selecciona una tienda</label>
+                <select onChange={(e) => 
+                  updateOrderData('tienda', e.target.value)}
+                   id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <option  >Elige una tienda</option>
+                  <option value="Portugal">Portugal</option>
+                  <option value="Quilicura">Quilicura</option>
+                  <option value="Rondizonni">Rondizonni</option>
+                  <option value="Apostol Santiago">Apostol Santiago</option>
+                </select>
+                </>
+          )}
 
           {shippingDetails.type === 'delivery' && (
             <>

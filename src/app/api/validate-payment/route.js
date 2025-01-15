@@ -5,8 +5,7 @@ import axios from 'axios';
 
 
 
-const tx = new WebpayPlus.Transaction(new Options(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY, Environment.Integration));
-
+const tx = new WebpayPlus.Transaction(new Options(process.env.Tbk_Api_Key_Id, process.env.Tbk_Api_Key_Secret, Environment.Production));
 export async function POST(req) { 
 
     try {
@@ -16,7 +15,6 @@ export async function POST(req) {
 
         return NextResponse.json(response);
       } catch (error) {
-        console.log(error)
         return NextResponse.json({ error: error.message }, { status: 500 });
       }
 

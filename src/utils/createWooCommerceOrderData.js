@@ -62,6 +62,10 @@ export const createWooCommerceOrder  = async (orderData, selectedMethod) => {
           value: orderData.personalInfo.type === 'business' ? 'factura' : 'boleta'
         },
         {
+          key: '_tienda',
+          value: orderData.tienda
+        },
+        {
           key: '_razon_social',
           value: orderData.personalInfo.businessName
         },

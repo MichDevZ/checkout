@@ -27,8 +27,6 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
   ];
 
 
-  console.log(orderData)
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -77,14 +75,13 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
           
     
           const data = await response.json();
-          console.log(data)
           if (data.url) {
             window.location.href = `${data.url}?token_ws=${data.token}`;
           } else {
             alert('Error al iniciar el pago.');
           }
         } catch (error) {
-          console.error(error);
+
           alert('Error en la transacción.');
         } finally {
           setIsProcessing(false);
@@ -93,7 +90,6 @@ export default function PaymentStep({ prevStep, updateOrderData, orderData }) {
       }
 
     } catch (error) {
-      console.error('Error creating order:', error);
       setErrors({
         submit: error.message || 'Error al procesar la orden'
       });
