@@ -61,9 +61,12 @@ export async function PATCH(req) {
 
 
 
+
 function generateWooCommerceID(orderId) {
   const uniqueString = crypto.getRandomValues(new Uint8Array(8))
       .reduce((acc, byte) => acc + byte.toString(16).padStart(2, '0'), '');
   return `wc:${uniqueString}:${orderId}`;
 
 }
+
+
