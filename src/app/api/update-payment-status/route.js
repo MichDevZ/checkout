@@ -10,7 +10,7 @@ import axios from 'axios';
 export async function PATCH(req) {  
 
     try {
-      const {orderId} = await req.json()
+      const {orderId, transactionData} = await req.json()
 
       if (!orderId) {
         return NextResponse.json({ error: 'El parámetro orderId es necesario.' }, { status: 400 });
@@ -18,7 +18,18 @@ export async function PATCH(req) {
 
         const {data} = await axios.patch(
             `https://cruzeirogomas.cl/wp-json/wc/v3/orders/${orderId}`, {
-                status: 'processing'
+                status: 'processing',
+                meta_data: [
+                  {key: 'transactionStatus', value: 'Autorizada'},
+                  {key: 'buyOrder', value: generateWooCommerceID(orderId)},
+                  {key: 'authorizationCode', value: transactionData.authorization_code},
+                  {key: 'cardNumber', value: transactionData.card_detail.card_number},
+                  {key: 'paymentType', value: transactionData.payment_type_code},
+                  {key: 'amount', value: transactionData.amount},
+                  {key: 'installmentsNumber', value: transactionData.installments_number},
+                  {key: 'transactionDate', value: transactionData.transaction_date},
+                ]
+
             },
             {
               headers: {
@@ -46,3 +57,15 @@ export async function PATCH(req) {
 
 
 }
+
+
+
+
+function generateWooCommerceID(orderId) {
+  const uniqueString = crypto.getRandomValues(new Uint8Array(8))
+      .reduce((acc, byte) => acc + byte.toString(16).padStart(2, '0'), '');
+  return `wc:${uniqueString}:${orderId}`;
+
+}
+
+

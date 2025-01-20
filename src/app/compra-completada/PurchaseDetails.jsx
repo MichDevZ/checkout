@@ -57,7 +57,7 @@ export default function PurchaseDetails({ orderData, payment, }) {
             className="flex justify-center mb-6"
           >
             <Image
-              src="https://www.cruzeirogomas.cl/wp-content/uploads/sites/2/2024/11/cropped-logo_cruzeirogomas_mediano_1.png"
+              src="/ogo_cruzeirogomas_mediano.png"
               alt="Cruzeiro Gomas Logo"
               width={150}
               height={75}
