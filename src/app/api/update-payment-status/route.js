@@ -16,6 +16,7 @@ export async function PATCH(req) {
         return NextResponse.json({ error: 'El parámetro orderId es necesario.' }, { status: 400 });
       }
 
+
         const {data} = await axios.patch(
             `https://cruzeirogomas.cl/wp-json/wc/v3/orders/${orderId}`, {
                 status: 'processing',
