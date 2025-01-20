@@ -15,7 +15,8 @@ export const validatePayment = async (setValidatePayment) => {
 
       if (data.response_code === 0) {
        await axios.patch('/api/update-payment-status', {
-          orderId
+          orderId,
+          transactionData: data
         })
       }
 
