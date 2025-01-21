@@ -6,6 +6,17 @@ import axios from 'axios';
   const credentials = Buffer.from(`${consumerKey}:${consumerSecret}`).toString('base64');
 
 
+  const paymentTypeDescriptions = {
+    VD: 'Débito',
+    VN: 'Credito Normal',
+    VC: 'Credito en Cuotas',
+    SI: '3 Cuotas Sin Interés',
+    S2: '2 Cuotas Sin Interés',
+    NC: 'N Cuotas Sin Interés',
+    VP: 'Venta Prepago',
+  };
+
+
 
 export async function PATCH(req) {  
 
@@ -16,18 +27,19 @@ export async function PATCH(req) {
         return NextResponse.json({ error: 'El parámetro orderId es necesario.' }, { status: 400 });
       }
 
+
         const {data} = await axios.patch(
             `https://cruzeirogomas.cl/wp-json/wc/v3/orders/${orderId}`, {
                 status: 'processing',
                 meta_data: [
-                  {key: 'transactionStatus', value: 'Autorizada'},
-                  {key: 'buyOrder', value: generateWooCommerceID(orderId)},
-                  {key: 'authorizationCode', value: transactionData.authorization_code},
-                  {key: 'cardNumber', value: transactionData.card_detail.card_number},
-                  {key: 'paymentType', value: transactionData.payment_type_code},
-                  {key: 'amount', value: transactionData.amount},
-                  {key: 'installmentsNumber', value: transactionData.installments_number},
-                  {key: 'transactionDate', value: transactionData.transaction_date},
+                  {key: '_transaction_status', value: 'Autorizada'},
+                  {key: '_buy_order', value: generateWooCommerceID(orderId)},
+                  {key: '_authorization_code', value: transactionData.authorization_code},
+                  {key: '_card_number', value: transactionData.card_detail.card_number},
+                  {key: '_payment_type', value: paymentTypeDescriptions[transactionData.payment_type_code]},
+                  {key: '_amount', value: transactionData.amount},
+                  {key: '_installments_number', value: transactionData.installments_number},
+                  {key: '_transaction_date', value: transactionData.transaction_date},
                 ]
 
             },

@@ -57,7 +57,7 @@ export default function PurchaseDetails({ orderData, payment, }) {
             className="flex justify-center mb-6"
           >
             <Image
-              src="/ogo_cruzeirogomas_mediano.png"
+              src="/logo_cruzeirogomas_mediano.png"
               alt="Cruzeiro Gomas Logo"
               width={150}
               height={75}

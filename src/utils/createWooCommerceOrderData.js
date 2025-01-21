@@ -66,6 +66,10 @@ export const createWooCommerceOrder  = async (orderData, selectedMethod) => {
           value: orderData.tienda
         },
         {
+          key: '_rut',
+          value: orderData.personalInfo.rut
+        },
+        {
           key: '_razon_social',
           value: orderData.personalInfo.businessName
         },
