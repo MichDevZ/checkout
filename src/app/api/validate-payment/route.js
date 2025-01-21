@@ -13,10 +13,6 @@ export async function POST(req) {
 
        const response = await tx.commit(token);
 
-       const response2 = await tx.refund('123183ac75eda4631c08ba059c2c09d0a6be20a365a99f7fd1672befa944512d', 23816 )
-
-       console.log('refund', response2);
-
         return NextResponse.json(response);
       } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
