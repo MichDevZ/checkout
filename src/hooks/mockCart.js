@@ -19,7 +19,7 @@ export const mockCart = {
         }
       },
       {
-        product_id: 124,
+        product_id: 2535,
         variation_id: 457,
         quantity: 1,
         line_total: "45000",
