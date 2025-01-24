@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'; 
-import { mockCart } from './mockCart';  
+import { mockCart} from './mockCart';  
 
 const useCartData = () => {
    const [cartData, setCartData] = useState({

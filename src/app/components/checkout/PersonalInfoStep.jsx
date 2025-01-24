@@ -13,6 +13,7 @@ export default function PersonalInfoStep({ nextStep, prevStep, updateOrderData, 
   const [showFreeShippingAlert, setShowFreeShippingAlert] = useState(true);
   const [loading, setLoading] = useState(false);
   const [billing, setBilling] = useState('')
+  const [errors, setErrors] = useState('')
 
   const [personalInfo, setPersonalInfo] = useState({
     type: 'personal',
@@ -25,9 +26,9 @@ export default function PersonalInfoStep({ nextStep, prevStep, updateOrderData, 
     businessBilling: "",
     businessRegion: "",
     businessComune: "",
-    businessGiro: '', // Nuevo campo para el giro
-    businessContact: '', // Nuevo campo para el nombre del contacto
-    businessPhone: '', // Nuevo campo para el teléfono de la empresa
+    businessGiro: '', 
+    businessContact: '', 
+    businessPhone: '', 
   });
 
 
@@ -41,6 +42,7 @@ export default function PersonalInfoStep({ nextStep, prevStep, updateOrderData, 
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (errors) return;
     updateOrderData('personalInfo', personalInfo);
     nextStep();
   };
@@ -61,6 +63,10 @@ export default function PersonalInfoStep({ nextStep, prevStep, updateOrderData, 
       transition={{ duration: 0.5 }}
       className="space-y-6"
     >
+      {errors && (
+        <p className='bg-red-500 text-white p-2 text-center rounded font-bold'>{errors} Invalido</p>
+      )}
+
       <div className="text-center">
         <h2 className="text-3xl font-bold text-[#222222]">Tus Datos Personales</h2>
         <p className="text-[#222222] mt-2" >
@@ -139,7 +145,15 @@ export default function PersonalInfoStep({ nextStep, prevStep, updateOrderData, 
                 id="businessName"
                 className="w-full p-3 border border-[#676767] rounded-lg bg-[#353535] text-[#ffffff] placeholder-[#676767] focus:ring-2 focus:ring-[#5da872]"
                 value={personalInfo.businessName}
-                onChange={(e) => setPersonalInfo({ ...personalInfo, businessName: e.target.value })}
+                onChange={(e) => {
+                  const value = e.target.value 
+                 if (/^[a-zA-Z\s]*$/.test(value)) {
+                    setPersonalInfo({ ...personalInfo, businessName: e.target.value })
+                    setErrors('')
+                    return
+                  }
+                  setErrors('Nombre de empresa')
+                }}
                 required
               />
             </div>
@@ -166,7 +180,16 @@ export default function PersonalInfoStep({ nextStep, prevStep, updateOrderData, 
                 id="businessGiro"
                 className="w-full p-3 border border-[#676767] rounded-lg bg-[#353535] text-[#ffffff] placeholder-[#676767] focus:ring-2 focus:ring-[#5da872]"
                 value={personalInfo.businessGiro}
-                onChange={(e) => setPersonalInfo({ ...personalInfo, businessGiro: e.target.value })}
+                onChange={(e) => {
+                  const value = e.target.value 
+                 if (/^[a-zA-Z\s]*$/.test(value)) { 
+                    setPersonalInfo({ ...personalInfo, businessGiro: e.target.value })
+                    setErrors('')
+                    return
+                  }
+
+                  setErrors('Giro de empresa')
+                }}
                 required
                 placeholder="Ej: Comercio al por menor"
               />
@@ -202,7 +225,15 @@ export default function PersonalInfoStep({ nextStep, prevStep, updateOrderData, 
               id="name"
               className="w-full p-3 border border-[#676767] rounded-lg bg-[#353535] text-[#ffffff] placeholder-[#676767] focus:ring-2 focus:ring-[#5da872]"
               value={personalInfo.name}
-              onChange={(e) => setPersonalInfo({ ...personalInfo, name: e.target.value })}
+              onChange={(e) => {
+                const value = e.target.value
+                if (/^[a-zA-Z\s]*$/.test(value)) {
+                  setPersonalInfo({ ...personalInfo, name: e.target.value })
+                  setErrors('')
+                  return
+                }
+                setErrors('Nombre')
+              }}
               required
             />
           </div>
@@ -214,7 +245,15 @@ export default function PersonalInfoStep({ nextStep, prevStep, updateOrderData, 
             id="phone"
             className="w-full p-3 border border-[#676767] rounded-lg bg-[#353535] text-[#ffffff] placeholder-[#676767] focus:ring-2 focus:ring-[#5da872]"
             value={personalInfo.phone}
-            onChange={(e) => setPersonalInfo({ ...personalInfo, phone: e.target.value })}
+            onChange={(e) => {
+              const value = e.target.value
+              if (/^\+?\d*$/.test(value) && value.length <= 12) {
+                setPersonalInfo({ ...personalInfo, phone: e.target.value })
+                setErrors('')
+                return
+              }
+              setErrors('Teléfono')
+            }}
             required
             placeholder="+569XXXXXXXX"
           />

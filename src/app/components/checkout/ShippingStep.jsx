@@ -1,5 +1,5 @@
 'use client';
-
+import axios from 'axios';
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { shippingCosts } from '../../data/shipping-costs';
@@ -10,6 +10,8 @@ import { isWithinAmericoVespucioRing}  from '../../data/shipping-costs'
 import LoadingSpinner from '../Ui/LoadingSpinner'
 import PopupPeso from './PesoPopup'
 import ShippingAdress from '../Shipping/ShippingAdress';
+import {storesMapping} from '../../../utils/MappingForStores'
+
 
 export default function ShippingStep({ nextStep, prevStep, updateOrderData, orderData, shippingDetails, setShippingDetails, comunas, setComunas }) {
 
@@ -18,11 +20,38 @@ export default function ShippingStep({ nextStep, prevStep, updateOrderData, orde
   const [isLoadingShipitPrice, setIsLoadingShipitPrice] = useState(false);
   const [loading, setLoading] = useState(true);
   const [comune, setComune] = useState('')
+  const [stores, setStores] = useState(['Apostol Santiago'])
  
+
 
   const cartWeight = orderData.cartWeight || 0;
 
- 
+
+  useEffect(() => {
+    if (orderData.cartItems) {
+      fetchData(orderData.cartItems.map(item => item.id));
+    }
+  }, [orderData.cartItems])
+  
+
+
+  const fetchData = async (ProductIDs) => {
+
+
+    try {
+      const {data} = await axios.post('/api/getStoresByStock', {
+        IDs: ProductIDs
+      });
+
+      if (data) {
+        setStores(prev =>[...prev, ...data.map(item => item.key)])
+      }
+
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+  
 
 
   const disabled = !isFormValid(shippingDetails, isLoadingShipitPrice, 
@@ -293,10 +322,9 @@ const getShipitPrice = async (comuna, weight) => {
                   updateOrderData('tienda', e.target.value)}
                    id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                   <option  >Elige una tienda</option>
-                  <option value="Portugal">Portugal</option>
-                  <option value="Quilicura">Quilicura</option>
-                  <option value="Rondizonni">Rondizonni</option>
-                  <option value="Apostol Santiago">Apostol Santiago</option>
+                  {stores && stores.map(store => (
+                    <option value={storesMapping[store]}>{storesMapping[store]}</option>
+                  ))}
                 </select>
                 </>
           )}
